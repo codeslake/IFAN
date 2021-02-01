@@ -48,20 +48,25 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_n
 --dl \
 -dist \
 ```
+* options
+    * `mode`:
+    * `config`:
+    * `trainer`:
+    * `network`:
+    * `b`:
+    * `th`:
+    * `dl`:
+    * `dist`:
 
 ### Testing
 * Evaluating the DPDD test set
 ```bash
-python run.py --mode IFAN --eval_mode quan --data DPDD
+python run.py --mode [MODE] --data [DATASET]
+# e.g., python run.py --mode IFAN --data DPDD
 ```
-* Evaluating the RealDOF test set
-```
-python run.py --mode IFAN --eval_mode quan --data RealDOF
-```
-* Evaluating the CUHK test set
-```
-python run.py --mode IFAN --eval_mode quan --data CUHK
-```
+* options
+    * `mode`:
+    * `data`:
 
 ## Testing with pre-trained weights of CVPR2021
 1. Download pretrained weights from [here](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing).
