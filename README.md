@@ -77,31 +77,46 @@ python run.py --mode IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoin
 ```
 * to test models used for evaluation
 ```
+## Table 2 in the main paper
 # The baseline model, 
 python run.py --mode B --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/B.pytorch
 
 # The model, D, 
 python run.py --mode D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
+
 # The model, F, 
 python run.py --mode F --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
+
 # The model, FD, 
 python run.py --mode FD --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
+
 # The model, FR, 
 python run.py --mode FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
+
+## Table 4 in the main paper
 # Our final model with N=8, 
 python run.py --mode IFAN_8 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
+
 # Our final model with N=26, 
 python run.py --mode IFAN_26 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
+
 # Our final model with N=35, 
 python run.py --mode IFAN_35 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
+
 # Our final model with N=44, 
 python run.py --mode IFAN_44 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
+
+## Table 5 in the main paper
 # Our model with the FAC layer, 
 python run.py --mode IFAN_FAC --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_FAC.pytorch
-# Our model for dual-pixel stereo inputs, 
-python run.py --mode IFAN_dual --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
+
+## Table 1 in the supplementary material
 # Our model trained with 16 bit images, 
 python run.py --mode IFAN_16bit --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
+
+## Table 2 in the supplementary material
+# Our model for dual-pixel stereo inputs, 
+python run.py --mode IFAN_dual --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
 ```
 
 ## License ##
