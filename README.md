@@ -79,6 +79,7 @@ python run.py --mode IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoin
 ```
 # The baseline model, 
 python run.py --mode B --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/B.pytorch
+
 # The model, D, 
 python run.py --mode D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
 # The model, F, 
