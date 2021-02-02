@@ -12,7 +12,7 @@ def get_config(project = '', mode = '', config_ = ''):
     config.config = config_
     config.is_train = False
     config.thread_num = 1
-    config.dist = True
+    config.dist = False
     config.resume = None # 'resume state file name'
     config.manual_seed = 0
     config.is_verbose = False

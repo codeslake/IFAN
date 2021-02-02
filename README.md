@@ -45,20 +45,21 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_n
 --config config_IFAN \
 --trainer trainer \
 --network IFAN \
---b 2 \
---th 8 \
---dl \
+-b 2 \
+-th 8 \
+-dl \
+-dist
 
-# single GPU (with DistributedDataParallel) example
-CUDA_VISIBLE_DEVICES=0 python -B -m torch.distributed.launch --nproc_per_node=1 --master_port=9000 run.py \
+# single GPU (with DataParallel) example
+CUDA_VISIBLE_DEVICES=0 python -B run.py \
 --is_train \
 --mode IFAN \
 --config config_IFAN \
 --trainer trainer \
 --network IFAN \
---b 8 \
---th 8 \
---dl \
+-b 8 \
+-th 8 \
+-dl \
 ```
 * options
     * `--is_train`: If it is specified, `run.py` will train the network.  
@@ -66,9 +67,10 @@ CUDA_VISIBLE_DEVICES=0 python -B -m torch.distributed.launch --nproc_per_node=1 
     * `--config`: The name of config file located as in `./config/[config].py`.
     * `--trainer`: The name of trainer  file located as in `./models/trainers/[trainer].py`.
     * `--network`: The name of network file located as in `./models/archs/[network].py`.
-    * `--b`: The batch size. For the multi GPU, total batch size will be, `nproc_per_node * b`.
-    * `--th`: The number of thread (`num_workers`) used for the data loader (defined in `./models/baseModel`).
-    * `--dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). Option works only when `--is_train` is specified. 
+    * `-b`: The batch size. For the multi GPU (`DistributedDataParallel`), total batch size will be, `nproc_per_node * b`.
+    * `-th`: The number of thread (`num_workers`) used for the data loader (defined in `./models/baseModel`).
+    * `-dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). Option works only when `--is_train` is specified. 
+    * `-dist`: whether to use `DistributedDataParallel`.
 
 ### Testing
 * Evaluating the DPDD test set

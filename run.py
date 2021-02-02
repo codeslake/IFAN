@@ -30,8 +30,7 @@ class Trainer():
         self.rank = rank
         if config.dist:
             self.pg = dist.new_group(range(dist.get_world_size()))
-        else:
-            self.pg = None
+            
         self.config = config
         if self.rank <= 0: self.summary = SummaryWriter(config.LOG_DIR.log_scalar)
 
@@ -85,12 +84,9 @@ class Trainer():
 
                 if state == 'valid' or state == 'train' : # add "or state == 'train" if you want to save train logs
                     if is_log:
-                        # norm = self.model.get_train_len() if state == 'train' else self.model.get_test_len()
-                        # if self.rank <= 0: print('\n\n\n1. ', norm)
-
-                        dist.all_reduce(self.norm, op=dist.ReduceOp.SUM, group=self.pg, async_op=False)
+                        if config.dist: dist.all_reduce(self.norm, op=dist.ReduceOp.SUM, group=self.pg, async_op=False)
                         for k, v in self.err_epoch[state].items():
-                            dist.all_reduce(self.err_epoch[state][k], op=dist.ReduceOp.SUM, group=self.pg, async_op=False)
+                            if config.dist:  dist.all_reduce(self.err_epoch[state][k], op=dist.ReduceOp.SUM, group=self.pg, async_op=False)
                             self.err_epoch[state][k] = (self.err_epoch[state][k] / self.norm).item()
 
                             if self.rank <= 0:
@@ -110,7 +106,8 @@ class Trainer():
                                         is_saved = False
 
                         self.err_epoch[state] = {}
-                        dist.barrier()
+                        if config.dist:
+                            dist.barrier()
 
             if self.rank <= 0:
                 if epoch % self.config.refresh_image_log_every_epoch['train'] == 0:
@@ -143,9 +140,6 @@ class Trainer():
                 bs = inputs['gt'].size()[0]
                 errs = self.model.results['errs']
                 for k, v in errs.items():
-                    # v = v.item() if torch.is_tensor(v) else v
-                    # v = v if torch.is_tensor(v) else torch.cuda.FloatTensor([v]).to(torch.device('cuda'))
-
                     v = bs * v
                     if self.itr == 1:
                         self.err_epoch[state][k] = v
@@ -156,6 +150,7 @@ class Trainer():
                             self.err_epoch[state][k] = v
                 self.norm = self.norm + bs 
                 if self.rank <= 0:
+                    ## saves image patches for logging
                     # inputs = self.model.results['inputs']
                     # outs = self.model.results['outs']
                     # sample_dir = self.config.LOG_DIR.sample if is_train else self.config.LOG_DIR.sample_val
