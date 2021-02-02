@@ -1,3 +1,4 @@
+
 # Iterative Filter Adaptive Network for Single Image Defocus Deblurring
 ![Python 3.8.5](https://img.shields.io/badge/python-3.8.5-green.svg?style=plastic)
 ![PyTorch 1.6.0](https://img.shields.io/badge/PyTorch-1.6.0-green.svg?style=plastic)
@@ -34,9 +35,10 @@ All material related to our paper is available via the following links:
 | [Supplementary Files](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
 | [Checkpoint Files](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
 
-## Training/Testing the network
+## Training & testing of the network
 ### Training
 ```
+# multi GPU (with DistributedDataParallel) example
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_node=4 --master_port=9000 run.py \
 --is_train \
 --mode IFAN \
@@ -46,17 +48,28 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_n
 --b 2 \
 --th 8 \
 --dl \
--dist \
+
+# single GPU (with DistributedDataParallel) example
+CUDA_VISIBLE_DEVICES=0 python -B -m torch.distributed.launch --nproc_per_node=1 --master_port=9000 run.py \
+--is_train \
+--mode IFAN \
+--config config_IFAN \
+--trainer trainer \
+--network IFAN \
+--b 2 \
+--th 8 \
+--dl \
 ```
 * options
-    * `mode`:
-    * `config`:
-    * `trainer`:
-    * `network`:
-    * `b`:
-    * `th`:
-    * `dl`:
-    * `dist`:
+    * `--is_train`: If it is specified, `run.py` will train the network.  
+    * `--mode`: The name of training mode. The logging folder named with the `mode` will be created under `./logs/Defocus_Deblurring/[mode]`. 
+    * `--config`: The name of config file located in `./config/[config]`.
+    * `--trainer`: The name of trainer  file located in `./models/trainers/[trainer]`.
+    * `--network`: The name of network file located in `./models/archs/[network]`.
+    * `--b`: The batch size.
+    * `--th`: The number of thread (`num_workers`) used for the data loader (defined in `./models/baseModel`).
+    * `--dl`: The option whether to delete logs under `./logs/Defocus_Deblurring/[mode]/*`. Option works only when `--is_train` is given. 
+    * `dist`: Whether to use `DistributedDataParallel`.
 
 ### Testing
 * Evaluating the DPDD test set
@@ -65,8 +78,12 @@ python run.py --mode [MODE] --data [DATASET]
 # e.g., python run.py --mode IFAN --data DPDD
 ```
 * options
-    * `mode`:
-    * `data`:
+    * `--mode`: The name of the training mode that you want to test.
+    * `--data`: The name of dataset for evaluation. We have `DPDD, RealDOF, CUHK`, and their path can be modified in `./configs/config.py`.
+    * `-ckpt_name`: Load sthe checkpoint with the name of the checkpoint under `./logs/Defocus_Deblurring/[mode]/checkpoint/train/epoch/ckpt/` (e.g., `python run.py --mode IFAN --data DPDD --ckpt_name IFAN_00000.pytorch`).
+    * `-ckpt_abs_name`. Loads the checkpoint of the absolute path (e.g., `python run.py --mode IFAN --data DPDD --ckpt_abs_name ./checkpoints/IFAN.pytorch`).
+    * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 0`). 
+    * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
 
 ## Testing with pre-trained weights of CVPR2021
 1. Download pretrained weights from [here](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing).
