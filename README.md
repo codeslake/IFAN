@@ -3,7 +3,7 @@
 ![Python 3.8.5](https://img.shields.io/badge/python-3.8.5-green.svg?style=plastic)
 ![PyTorch 1.6.0](https://img.shields.io/badge/PyTorch-1.6.0-green.svg?style=plastic)
 ![CUDA 10.1.105](https://img.shields.io/badge/CUDA-10.1.105-green.svg?style=plastic)
-![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-green.svg?style=plastic)
+![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-blue.svg?style=plastic)
 
 ![Teaser image](./assets/figure.jpg)
 
@@ -34,6 +34,10 @@ All material related to our paper is available via the following links:
 | [Paper PDF](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
 | [Supplementary Files](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
 | [Checkpoint Files](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
+| [The DPDD dataset](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
+| [The CUHK dataset](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
+| [The PixelDP test set](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
+| [The RealDOF test set](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
 
 ## Training & testing of the network
 ### Training
@@ -74,14 +78,13 @@ CUDA_VISIBLE_DEVICES=0 python -B run.py \
     * `-dist`: whether to use `DistributedDataParallel`.
 
 ### Testing
-* Evaluating the DPDD test set
 ```bash
 python run.py --mode [MODE] --data [DATASET]
 # e.g., python run.py --mode IFAN --data DPDD
 ```
 * options
     * `--mode`: The name of the training mode that you want to test.
-    * `--data`: The name of dataset for evaluation. We have `DPDD, RealDOF, CUHK`, and their path can be modified in `./configs/config.py`.
+    * `--data`: The name of dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP`, and their path can be modified in `./configs/config.py`.
     * `-ckpt_name`: Load sthe checkpoint with the name of the checkpoint under `./logs/Defocus_Deblurring/[mode]/checkpoint/train/epoch/ckpt/` (e.g., `python run.py --mode IFAN --data DPDD --ckpt_name IFAN_00000.pytorch`).
     * `-ckpt_abs_name`. Loads the checkpoint of the absolute path (e.g., `python run.py --mode IFAN --data DPDD --ckpt_abs_name ./checkpoints/IFAN.pytorch`).
     * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 0`). 
@@ -91,57 +94,57 @@ python run.py --mode [MODE] --data [DATASET]
 1. Download pretrained weights from [here](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing).
 Then, unzip them under `./checkpoints`.
 
-2. Place your images under `./test`. Input images and their segment map should be placed under `./test/input` and `./test/seg_in`, respectively. Place target images and their segment map under `./test/target` and `./test/seg_tar`. 
+2. Download and Place test sets ([DPDD](temp), [RealDOF](temp), [PixelDP](temp) and [CUHK](temp)) under `./test` (the offset can be modified in `./configs/config.py`).
 
 3. To test the network, type:
 * to test the final model 
 ```bash
 # Our final model 
-python run.py --mode IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
+python run.py --mode IFAN --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
 ```
 
 * to test models used for evaluation
 ```bash
 ## Table 2 in the main paper
 # The baseline model
-python run.py --mode B --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/B.pytorch
+python run.py --mode B --config config_B --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/B.pytorch
 
 # D
-python run.py --mode D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
+python run.py --mode D --config config_D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
 
 # F
-python run.py --mode F --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
+python run.py --mode F --config config_F --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
 
 # FD
-python run.py --mode FD --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
+python run.py --mode FD --config config_FD --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
 
 # FR
-python run.py --mode FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
+python run.py --mode FR --config config_FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
 
 ## Table 4 in the main paper
 # Our final model with N=8 
-python run.py --mode IFAN_8 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
+python run.py --mode IFAN_8 --config config_IFAN_8 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
 
 # Our final model with N=26
-python run.py --mode IFAN_26 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
+python run.py --mode IFAN_26 --config config_IFAN_26 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
 
 # Our final model with N=35
-python run.py --mode IFAN_35 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
+python run.py --mode IFAN_35 --config config_IFAN_35 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
 
 # Our final model with N=44
-python run.py --mode IFAN_44 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
+python run.py --mode IFAN_44 --config config_IFAN_44 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
 
 ## Table 5 in the main paper
 # IFAN in which the IAC layer replaced with the FAC layer
-python run.py --mode IFAN_FAC --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_FAC.pytorch
+python run.py --mode IFAN_FAC --config config_IFAN_FAC --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_FAC.pytorch
 
 ## Table 1 in the supplementary material
 # Our model trained with 16 bit images
-python run.py --mode IFAN_16bit --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
+python run.py --mode IFAN_16bit --config config_IFAN_16bit --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
 
 ## Table 2 in the supplementary material
 # Our model for dual-pixel stereo inputs
-python run.py --mode IFAN_dual --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
+python run.py --mode IFAN_dual --config config_IFAN_dual --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
 ```
 
 ## License ##
