@@ -28,7 +28,10 @@ from ckpt_manager import CKPT_Manager
 class Trainer():
     def __init__(self, config, rank = -1):
         self.rank = rank
-        self.pg = dist.new_group(range(dist.get_world_size()))
+        if config.dist:
+            self.pg = dist.new_group(range(dist.get_world_size()))
+        else:
+            self.pg = None
         self.config = config
         if self.rank <= 0: self.summary = SummaryWriter(config.LOG_DIR.log_scalar)
 
@@ -124,7 +127,8 @@ class Trainer():
 
         is_train = True if state == 'train' else False
         data_loader = self.model.data_loader_train if is_train else self.model.data_loader_eval
-        if is_train: self.model.sampler_train.set_epoch(epoch)
+        if config.dist:
+            if is_train: self.model.sampler_train.set_epoch(epoch)
 
 
         self.norm = torch.tensor(0).to(torch.device('cuda'))
@@ -264,7 +268,8 @@ if __name__ == '__main__':
             print(toRed('\tNetwork: {}'.format(config.network)))
             print(toRed('\tTrainer: {}'.format(config.trainer)))
 
-        dist.barrier()
+        if config.dist:
+            dist.barrier()
 
         ## random seed
         seed = config.manual_seed
@@ -297,12 +302,9 @@ if __name__ == '__main__':
         parser.add_argument('-ckpt_abs_name', '--ckpt_abs_name', type=str, default = None, help='ckpt abs name')
         parser.add_argument('-ckpt_epoch', '--ckpt_epoch', type=int, default = None, help='ckpt epoch')
         parser.add_argument('-ckpt_sc', '--ckpt_score', action = 'store_true', help='ckpt name')
-        parser.add_argument('-ed', '--eval_deblur', action = 'store_true', help='deblur evaluation')
-        parser.add_argument('-ef', '--eval_feat', action = 'store_true', help='feat evaluation')
-        parser.add_argument('-er', '--eval_reblur', action = 'store_true', help='reblur evaluation')
         parser.add_argument('-dist', '--dist', action = 'store_true', default = False, help = 'whether to distributed pytorch')
-        parser.add_argument('-eval_mode', '--eval_mode', type=str, default = 'qual', help = 'evaluation mode. qual(qualitative)/quan(quantitative)')
-        parser.add_argument('-data', '--data', type=str, default = 'DP', help = 'dataset to evaluate(DP/pixel)')
+        parser.add_argument('-eval_mode', '--eval_mode', type=str, default = 'quan', help = 'evaluation mode. qual(qualitative)/quan(quantitative)')
+        parser.add_argument('-data', '--data', type=str, default = 'DPDD', help = 'dataset to evaluate(DP/pixel)')
         args, _ = parser.parse_known_args()
 
         config.EVAL.ckpt_name = args.ckpt_name
@@ -310,9 +312,6 @@ if __name__ == '__main__':
         config.EVAL.ckpt_epoch = args.ckpt_epoch
         config.EVAL.load_ckpt_by_score = args.ckpt_score
 
-        config.EVAL.eval_deblur = args.eval_deblur
-        config.EVAL.eval_feat = args.eval_feat
-        config.EVAL.eval_reblur = args.eval_reblur
         config.dist = args.dist
         config.EVAL.mode = args.eval_mode
         config.EVAL.data = args.data
