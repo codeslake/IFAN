@@ -59,7 +59,7 @@ CUDA_VISIBLE_DEVICES=0 python -B run.py \
 --network IFAN \
 -b 8 \
 -th 8 \
--dl \
+-dl
 ```
 * options
     * `--is_train`: If it is specified, `run.py` will train the network.  
@@ -69,7 +69,8 @@ CUDA_VISIBLE_DEVICES=0 python -B run.py \
     * `--network`: The name of network file located as in `./models/archs/[network].py`.
     * `-b`: The batch size. For the multi GPU (`DistributedDataParallel`), total batch size will be, `nproc_per_node * b`.
     * `-th`: The number of thread (`num_workers`) used for the data loader (defined in `./models/baseModel`).
-    * `-dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). Option works only when `--is_train` is specified. 
+    * `-dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). Option works only when `--is_train` is specified.
+    * `-r`: Resume trining with specified epoch # (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
     * `-dist`: whether to use `DistributedDataParallel`.
 
 ### Testing
