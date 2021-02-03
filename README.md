@@ -31,7 +31,7 @@ All material related to our paper is available via the following links:
 
 | Link |
 | :-------------- |
-| [Paper PDF](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
+| [The main paper](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
 | [Supplementary Files](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
 | [Checkpoint Files](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
 | [The DPDD dataset](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |

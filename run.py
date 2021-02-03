@@ -30,7 +30,7 @@ class Trainer():
         self.rank = rank
         if config.dist:
             self.pg = dist.new_group(range(dist.get_world_size()))
-            
+
         self.config = config
         if self.rank <= 0: self.summary = SummaryWriter(config.LOG_DIR.log_scalar)
 
@@ -220,7 +220,6 @@ if __name__ == '__main__':
 
         ## CUSTOM
         parser.add_argument('-wi', '--weights_init', type = float, default = config.wi, help = 'weights_init')
-        parser.add_argument('-cc', '--coef_cycle', type = float, default = config.coef_cycle, help = 'coef_cycle')
         parser.add_argument('-lmdb', '--lmdb', action = 'store_true', default = False, help = 'whether to use lmdb')
         parser.add_argument('-proc', '--proc', type = str, default = 'proc', help = 'dummy process name for killing')
         parser.add_argument('-gc', '--gc', type = float, default = config.gc, help = 'gradient clipping')
@@ -241,7 +240,6 @@ if __name__ == '__main__':
 
         # CUSTOM
         config.wi = args.weights_init
-        config.coef_cycle = args.coef_cycle
         config.lmdb = args.lmdb
         config.gc = args.gc
 

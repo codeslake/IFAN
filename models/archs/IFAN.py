@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as Func
 import collections
 from models.utils import DPD
+from models.nn_common import conv, upconv, resnet_block
 
 import time
 
@@ -24,8 +25,7 @@ class Network(nn.Module):
         ch4 = ch1 * 4
         self.ch4 = ch4
 
-        # weight init
-        self.wi = config.wi
+        # weight init for filter predictor
         self.wiF = config.wiF
 
         ###################################
@@ -112,35 +112,16 @@ class Network(nn.Module):
             resnet_block(ch4, kernel_size=ks, res_num=res_num),
             conv(ch4, self.kernel_dim, kernel_size=1, act = None))
 
-    def weights_init(self, m):
-        if isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.ConvTranspose2d):
-            torch.nn.init.xavier_uniform_(m.weight, gain = self.wi)
-            if m.bias is not None:
-                torch.nn.init.constant_(m.bias, 0)
-            elif type(m) == torch.nn.BatchNorm2d or type(m) == torch.nn.InstanceNorm2d:
-                if m.weight is not None:
-                    torch.nn.init.constant_(m.weight, 1)
-                    torch.nn.init.constant_(m.bias, 0)
-            elif type(m) == torch.nn.Linear:
-                torch.nn.init.normal_(m.weight, 0, 0.01)
-                torch.nn.init.constant_(m.bias, 0)
-
     def weights_init_F(self, m):
         if isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.ConvTranspose2d):
             torch.nn.init.xavier_uniform_(m.weight, gain = self.wiF)
             if m.bias is not None:
                 torch.nn.init.constant_(m.bias, 0)
-            elif type(m) == torch.nn.BatchNorm2d or type(m) == torch.nn.InstanceNorm2d:
-                if m.weight is not None:
-                    torch.nn.init.constant_(m.weight, 1)
-                    torch.nn.init.constant_(m.bias, 0)
-            elif type(m) == torch.nn.Linear:
-                torch.nn.init.normal_(m.weight, 0, 0.01)
-                torch.nn.init.constant_(m.bias, 0)
 
     def init_F(self):
         self.F.apply(self.weights_init_F)
 
+##########################################################################
     def forward(self, C, R=None, L=None, is_train=False):
         # feature extractor
         f1 = self.conv1_3(self.conv1_2(self.conv1_1(C)))
@@ -223,57 +204,3 @@ def SAC(feat_in, kernel1, kernel2, ksize):
     feat_out = feat_out.permute(0, 3, 1, 2).contiguous()
 
     return feat_out
-
-def conv(in_channels, out_channels, kernel_size=3, stride=1,dilation=1, bias=True, act='LeakyReLU'):
-    if act is not None:
-        if act == 'LeakyReLU':
-            act_ = nn.LeakyReLU(0.1,inplace=True)
-        elif act == 'ReLU':
-            act_ = nn.ReLU()
-        elif act == 'Sigmoid':
-            act_ = nn.Sigmoid()
-        elif act == 'Tanh':
-            act_ = nn.Tanh()
-
-        return nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, dilation=dilation, padding=((kernel_size-1)//2)*dilation, bias=bias),
-            act_
-        )
-    else:
-        return nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, dilation=dilation, padding=((kernel_size-1)//2)*dilation, bias=bias)
-
-def upconv(in_channels, out_channels):
-    return nn.Sequential(
-        nn.ConvTranspose2d(in_channels, out_channels, kernel_size=4, stride=2, padding=1, bias=True),
-        nn.LeakyReLU(0.1,inplace=True)
-    )
-
-def resnet_block(in_channels,  kernel_size=3, dilation=[1,1], bias=True, res_num=1):
-    return ResnetBlock(in_channels, kernel_size, dilation, bias=bias, res_num=res_num)
-
-class ResnetBlock(nn.Module):
-    def __init__(self, in_channels, kernel_size, dilation, bias, res_num):
-        super(ResnetBlock, self).__init__()
-
-        self.res_num = res_num
-        self.stem = nn.ModuleList([
-            nn.Sequential(
-                nn.Conv2d(in_channels, in_channels, kernel_size=kernel_size, stride=1, dilation=dilation[0], padding=((kernel_size-1)//2)*dilation[0], bias=bias),
-                nn.LeakyReLU(0.1, inplace=True),
-                nn.Conv2d(in_channels, in_channels, kernel_size=kernel_size, stride=1, dilation=dilation[1], padding=((kernel_size-1)//2)*dilation[1], bias=bias),
-            ) for i in range(res_num)
-        ])
-    def forward(self, x):
-
-        if self.res_num > 1:
-            temp = x
-
-        for i in range(self.res_num):
-            xx = self.stem[i](x)
-            x = x + xx
-            x = Func.leaky_relu(x, 0.1, inplace=True)
-
-        if self.res_num > 1:
-            x = x + temp
-
-        return x

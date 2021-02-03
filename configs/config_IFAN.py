@@ -16,8 +16,6 @@ def get_config(project = '', mode = '', config = ''):
 
     config.Fs = 3 # filter size
     config.N = 17
-    config.DPGK_num = 8
-    config.DPGK_dim = config.ch * 4
 
     # weight init
     config.wi = 1.0
@@ -26,8 +24,7 @@ def get_config(project = '', mode = '', config = ''):
     # for cycle
     config.RBFs = 3
     config.RBF_num = 17
-    config.coef_cycle = 1.5
-
+    
     # gradient clipping
     config.gc = 0.5
 

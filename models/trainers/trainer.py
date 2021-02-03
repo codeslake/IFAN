@@ -264,8 +264,21 @@ class DeblurNet(nn.Module):
             if self.rank <= 0: print(toRed('\tinitializing RBN'))
             self.reblurNet = reblurNet(config, self.Network.kernel_dim)
 
+    def weights_init(self, m):
+        if isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.ConvTranspose2d):
+            torch.nn.init.xavier_uniform_(m.weight, gain = self.config.wi)
+            if m.bias is not None:
+                torch.nn.init.constant_(m.bias, 0)
+            elif type(m) == torch.nn.BatchNorm2d or type(m) == torch.nn.InstanceNorm2d:
+                if m.weight is not None:
+                    torch.nn.init.constant_(m.weight, 1)
+                    torch.nn.init.constant_(m.bias, 0)
+            elif type(m) == torch.nn.Linear:
+                torch.nn.init.normal_(m.weight, 0, 0.01)
+                torch.nn.init.constant_(m.bias, 0)
+
     def init(self):
-        self.Network.apply(self.Network.weights_init)
+        self.Network.apply(self.weights_init)
         self.Network.init_F()
         if 'R' in self.config.mode or 'IFAN' in self.config.mode:
             self.reblurNet.apply(self.reblurNet.weights_init)

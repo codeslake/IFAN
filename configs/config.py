@@ -30,7 +30,6 @@ def get_config(project = '', mode = '', config_ = ''):
     config.width = 256
     config.ch = 64
     config.res_num = 1
-    config.max_displacement = 10
 
     # learning rate
     config.lr_init = 1e-4
