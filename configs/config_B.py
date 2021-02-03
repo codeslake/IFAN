@@ -25,7 +25,8 @@ def get_config(project = '', mode = '', config = ''):
     config.gc = 0.5
 
     # max_sigma for Gaussian noise
-    config.max_sig = 0.005**(1/2)
-    
+    config.max_sig = 0.005**(1/2) # 0.07
+
+
     return config
 
