@@ -100,51 +100,51 @@ Then, unzip them under `./checkpoints`.
 * to test the final model 
 ```bash
 # Our final model 
-python run.py --mode IFAN --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
+python run.py --mode IFAN --network IFAN --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
 ```
 
 * to test models used for evaluation
 ```bash
 ## Table 2 in the main paper
 # The baseline model
-python run.py --mode B --config config_B --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/B.pytorch
+python run.py --mode B --network B --config config_B --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/B.pytorch
 
 # D
-python run.py --mode D --config config_D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
+python run.py --mode D --network D --config config_D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
 
 # F
-python run.py --mode F --config config_F --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
+python run.py --mode F --network F --config config_F --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
 
 # FD
-python run.py --mode FD --config config_FD --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
+python run.py --mode FD --network FD --config config_FD --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
 
 # FR
-python run.py --mode FR --config config_FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
+python run.py --mode FR --network F --config config_FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
 
 ## Table 4 in the main paper
 # Our final model with N=8 
-python run.py --mode IFAN_8 --config config_IFAN_8 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
+python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
 
 # Our final model with N=26
-python run.py --mode IFAN_26 --config config_IFAN_26 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
+python run.py --mode IFAN_26 --network IFAN --config config_IFAN_26 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
 
 # Our final model with N=35
-python run.py --mode IFAN_35 --config config_IFAN_35 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
+python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
 
 # Our final model with N=44
-python run.py --mode IFAN_44 --config config_IFAN_44 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
+python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
 
 ## Table 5 in the main paper
 # IFAN in which the IAC layer replaced with the FAC layer
-python run.py --mode IFAN_FAC --config config_IFAN_FAC --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_FAC.pytorch
+python run.py --mode IFAN_FAC --network IFAN_FAC --config config_IFAN_FAC --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_FAC.pytorch
 
 ## Table 1 in the supplementary material
 # Our model trained with 16 bit images
-python run.py --mode IFAN_16bit --config config_IFAN_16bit --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
+python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
 
 ## Table 2 in the supplementary material
 # Our model for dual-pixel stereo inputs
-python run.py --mode IFAN_dual --config config_IFAN_dual --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
+python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN_dual --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
 ```
 
 ## License ##
