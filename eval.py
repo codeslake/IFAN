@@ -84,11 +84,6 @@ def init(config, mode = 'deblur'):
         config.EVAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_c'
         config.EVAL.l_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_l'
         config.EVAL.r_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_r'
-    if config.EVAL.data == 'DP_val':
-        config.EVAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/val_c'
-        config.EVAL.l_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/val_l'
-        config.EVAL.r_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/val_r'
-        config.EVAL.r_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/train_r'
     elif config.EVAL.data == 'pixel':
         config.EVAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_pixel/test_c'
         config.EVAL.l_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_pixel/test_l'
