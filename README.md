@@ -9,7 +9,7 @@
 
 This repository contains the official PyTorch implementation of the following paper:
 
-> **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring](http://cg.postech.ac.kr/papers/2020_CGI_JY.pdf)**<br>
+> **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring (todo)](http://cg.postech.ac.kr/papers/2020_CGI_JY.pdf)**<br>
 > Junyong Lee, Hyeongseok Son, Jaesung Rim, Sunghyun Cho, Seungyong Lee, CVPR2021
 
 If you find this code useful, please consider citing:
@@ -31,13 +31,13 @@ All material related to our paper is available via the following links:
 
 | Link |
 | :-------------- |
-| [The main paper](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
-| [Supplementary Files](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
+| [The main paper (todo)](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
+| [Supplementary Files (todo)](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
 | [Checkpoint Files](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
-| [The DPDD dataset](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
-| [The CUHK dataset](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
-| [The PixelDP test set](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
-| [The RealDOF test set](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
+| [The DPDD dataset](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel#:~:text=Dual%2DPixel%20Defocus%20Deblurring%20(DPDD,(i.e.%2C%206720x4480%20pixels).) |
+| [The CUHK dataset](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html) |
+| [The PixelDP test set](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008) |
+| [The RealDOF test set (todo)](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
 
 ## Training & testing of the network
 ### Training

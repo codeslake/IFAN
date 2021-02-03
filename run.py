@@ -196,7 +196,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--is_train', action = 'store_true', default = False, help = 'whether to delete log')
-    parser.add_argument('--config', type = str, default = 'config', help = 'config name')
+    parser.add_argument('--config', type = str, default = None, help = 'config name')
     parser.add_argument('--mode', type = str, default = mode, help = 'mode name')
     parser.add_argument('--project', type = str, default = project, help = 'project name')
     args, _ = parser.parse_known_args()
@@ -283,14 +283,21 @@ if __name__ == '__main__':
         from configs.config import get_config
         from easydict import EasyDict as edict
         print(toGreen('Laoding Config for evaluation'))
-        config = get_config(args.project, args.mode, None)
-        with open('{}/config.txt'.format(config.LOG_DIR.config)) as json_file:
-            json_data = json.load(json_file)
-            config_lib = importlib.import_module('configs.{}'.format(json_data['config']))
-            config = edict(json_data)
-            # print(config['config'])
+        # config = get_config(args.project, args.mode, None)
+        if args.config is None:
+            with open('{}/config.txt'.format(config.LOG_DIR.config)) as json_file:
+                json_data = json.load(json_file)
+                config_lib = importlib.import_module('configs.{}'.format(json_data['config']))
+                # config = edict(json_data)
+                # print(config['config'])
+        else:
+            config_lib = importlib.import_module('configs.{}'.format(args.config))
+
+        config = config_lib.get_config(args.project, args.mode, args.config)
+
         config.is_train = False
         ## EVAL
+        parser.add_argument('-net', '--network', type = str, default = config.mode, help = 'network name')
         parser.add_argument('-ckpt_name', '--ckpt_name', type=str, default = None, help='ckpt name')
         parser.add_argument('-ckpt_abs_name', '--ckpt_abs_name', type=str, default = None, help='ckpt abs name')
         parser.add_argument('-ckpt_epoch', '--ckpt_epoch', type=int, default = None, help='ckpt epoch')
@@ -300,6 +307,7 @@ if __name__ == '__main__':
         parser.add_argument('-data', '--data', type=str, default = 'DPDD', help = 'dataset to evaluate(DP/pixel)')
         args, _ = parser.parse_known_args()
 
+        config.network = args.network
         config.EVAL.ckpt_name = args.ckpt_name
         config.EVAL.ckpt_abs_name = args.ckpt_abs_name
         config.EVAL.ckpt_epoch = args.ckpt_epoch

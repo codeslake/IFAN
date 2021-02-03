@@ -17,15 +17,16 @@ class CKPT_Manager:
         self.is_descending = is_descending
 
     def load_ckpt(self, network, by_score = True, name = None, abs_name = None, epoch = None):
-        # read file
-        try:
-            with open(self.ckpt_list, 'r') as file:
-                lines = file.read().splitlines()
-                file.close()
-        except:
-            return
         # get ckpt path
         if name is None and abs_name is None and epoch is None:
+            try:
+                with open(self.ckpt_list, 'r') as file:
+                    lines = file.read().splitlines()
+                    file.close()
+            except:
+                print('ckpt_list does not exists')
+                return
+
             if by_score:
                 file_name = lines[0].split(' ')[0]
             else:
