@@ -283,12 +283,12 @@ if __name__ == '__main__':
         from configs.config import get_config
         from easydict import EasyDict as edict
         print(toGreen('Laoding Config for evaluation'))
-        # config = get_config(args.project, args.mode, None)
         if args.config is None:
+            config = get_config(args.project, args.mode, None)
             with open('{}/config.txt'.format(config.LOG_DIR.config)) as json_file:
                 json_data = json.load(json_file)
-                config_lib = importlib.import_module('configs.{}'.format(json_data['config']))
-                # config = edict(json_data)
+                # config_lib = importlib.import_module('configs.{}'.format(json_data['config']))
+                config = edict(json_data)
                 # print(config['config'])
         else:
             config_lib = importlib.import_module('configs.{}'.format(args.config))
