@@ -33,11 +33,11 @@ All material related to our paper is available via the following links:
 | :-------------- |
 | [The main paper (todo)](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
 | [Supplementary Files (todo)](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
-| [Checkpoint Files](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
-| [The DPDD dataset](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel#:~:text=Dual%2DPixel%20Defocus%20Deblurring%20(DPDD,(i.e.%2C%206720x4480%20pixels).) |
+| [Checkpoint Files](https://www.dropbox.com/s/grxohabacw0h7hz/checkpoints.zip?dl=0) |
+| [The DPDD dataset](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel) |
 | [The CUHK dataset](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html) |
 | [The PixelDP test set](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008) |
-| [The RealDOF test set (todo)](https://drive.google.com/file/d/1Xl8cXmhlD1DjaYNcroRLMjYR3C9QplNs/view?usp=sharing) |
+| [The RealDOF test set](https://www.dropbox.com/s/3l5gt3zz1zad5zl/RealDOF.zip?dl=0) |
 
 ## Training & testing of the network
 ### Training
