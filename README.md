@@ -41,7 +41,7 @@ All material related to our paper is available by following links:
 
 ## Training & testing of the network
 ### Training
-```
+```bash
 # multi GPU (with DistributedDataParallel) example
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_node=4 --master_port=9000 run.py \
 --is_train \
