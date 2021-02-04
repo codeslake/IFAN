@@ -112,13 +112,13 @@ python run.py --mode B --network B --config config_B --eval_mode quan --data DPD
 # D
 python run.py --mode D --network D --config config_D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
 
-# F
+# F (TODO)
 python run.py --mode F --network F --config config_F --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
 
-# FD
+# FD (TODO)
 python run.py --mode FD --network FD --config config_FD --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
 
-# FR
+# FR (TODO)
 python run.py --mode FR --network F --config config_FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
 
 ## Table 4 in the main paper
@@ -135,7 +135,7 @@ python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --eval_mode 
 python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
 
 ## Table 5 in the main paper
-# IFAN in which the IAC layer replaced with the FAC layer
+# IFAN in which the IAC layer replaced with the FAC layer (TODO)
 python run.py --mode IFAN_FAC --network IFAN_FAC --config config_IFAN_FAC --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_FAC.pytorch
 
 ## Table 1 in the supplementary material
@@ -144,7 +144,7 @@ python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --eval
 
 ## Table 2 in the supplementary material
 # Our model for dual-pixel stereo inputs
-python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN_dual --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
+python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
 ```
 
 ## License ##
