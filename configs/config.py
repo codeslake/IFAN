@@ -28,8 +28,6 @@ def get_config(project = '', mode = '', config_ = ''):
     config.batch_size_test = 1 #3 for sample recurrent2
     config.height = 256
     config.width = 256
-    config.ch = 64
-    config.res_num = 1
 
     # learning rate
     config.lr_init = 1e-4
@@ -55,8 +53,8 @@ def get_config(project = '', mode = '', config_ = ''):
     config.d_path = '/data1/junyonglee/dd_dp_dataset_canon/DMENet/train_c'
     config.m_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/train_c/sharp_mask_target'
 
-    config.input_path = 'source' #os.path.join(config.data_path, 'input')
-    config.gt_path = 'target' #os.path.join(config.data_path, 'gt')
+    config.input_path = 'source'
+    config.gt_path = 'target'
 
     # logs
     config.max_ckpt_num = 100

@@ -33,7 +33,7 @@ All material related to our paper is available by following links:
 | :-------------- |
 | [The main paper (todo)](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
 | [Supplementary Files (todo)](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
-| [Checkpoint Files](https://www.dropbox.com/s/grxohabacw0h7hz/checkpoints.zip?dl=0) |
+| [Checkpoint Files](https://www.dropbox.com/s/p9efo744tzr3wsv/checkpoints.zip?dl=0) |
 | [The DPDD dataset](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel) |
 | [The CUHK dataset](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html) |
 | [The PixelDP test set](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008) |
@@ -91,7 +91,7 @@ python run.py --mode [MODE] --data [DATASET]
     * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
 
 ## Testing with pre-trained weights of CVPR2021
-1. Download pretrained weights from [here](https://www.dropbox.com/s/grxohabacw0h7hz/checkpoints.zip?dl=0).
+1. Download pretrained weights from [here](https://www.dropbox.com/s/p9efo744tzr3wsv/checkpoints.zip?dl=0).
 Then, unzip them under `./checkpoints`.
 
 2. (TODO) Download and Place test sets ([DPDD](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel), [RealDOF](https://www.dropbox.com/s/3l5gt3zz1zad5zl/RealDOF.zip?dl=0), [PixelDP](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008) and [CUHK](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) under `./test` (the offset can be modified in `./configs/config.py`).
@@ -112,13 +112,13 @@ python run.py --mode B --network B --config config_B --eval_mode quan --data DPD
 # D
 python run.py --mode D --network D --config config_D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
 
-# F (TODO)
-python run.py --mode F --network F --config config_F --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
+# F
+python run.py --mode F --network F --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
 
-# FD (TODO)
-python run.py --mode FD --network FD --config config_FD --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
+# FD
+python run.py --mode FD --network IFAN --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
 
-# FR (TODO)
+# FR
 python run.py --mode FR --network F --config config_FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
 
 ## Table 4 in the main paper

@@ -191,16 +191,19 @@ def SAC(feat_in, kernel1, kernel2, ksize):
     N, kernels, H, W = kernel1.size()
     pad = (ksize - 1) // 2
 
-    feat_in = Func.pad(feat_in, (pad, pad, pad, pad), mode="replicate")
-    feat_in = feat_in.unfold(2, ksize, 1).unfold(3, ksize, 1)
-    feat_in = feat_in.permute(0, 2, 3, 1, 5, 4).reshape(N, H, W, channels, -1)
+    feat_in = Func.pad(feat_in, (0, 0, pad, pad), mode="replicate")
+    feat_in = feat_in.unfold(2, ksize, 1)
+    feat_in = feat_in.permute(0, 2, 3, 1, 4).reshape(N, H, W, channels, -1)
 
-    kernel1 = kernel1.permute(0, 2, 3, 1).reshape(N, H, W, channels, ksize, 1)
-    kernel2 = kernel2.permute(0, 2, 3, 1).reshape(N, H, W, channels, 1, ksize)
-    kernel = torch.matmul(kernel1.contiguous(), kernel2.contiguous())
-    kernel = kernel.permute(0, 1, 2, 3, 5, 4).reshape(N, H, W, channels, -1)
+    kernel1 = kernel1.permute(0, 2, 3, 1).reshape(N, H, W, channels, ksize)
+    feat_in = torch.sum(torch.mul(feat_in.contiguous(), kernel1.contiguous()), -1)
+    feat_in = feat_in.permute(0, 3, 1, 2).contiguous()
 
-    feat_out = torch.sum(torch.mul(feat_in.contiguous(), kernel.contiguous()), -1)
-    feat_out = feat_out.permute(0, 3, 1, 2).contiguous()
+    feat_in = Func.pad(feat_in, (pad, pad, 0, 0), mode="replicate")
+    feat_in = feat_in.unfold(3, ksize, 1)
+    feat_in = feat_in.permute(0, 2, 3, 1, 4).reshape(N, H, W, channels, -1)
+    kernel2 = kernel2.permute(0, 2, 3, 1).reshape(N, H, W, channels, ksize)
+    feat_in = torch.sum(torch.mul(feat_in.contiguous(), kernel1.contiguous()), -1)
+    feat_out = feat_in.permute(0, 3, 1, 2).contiguous()
 
     return feat_out
