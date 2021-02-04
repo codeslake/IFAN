@@ -27,7 +27,7 @@ For any inquiries, please contact [junyonglee@postech.ac.kr](mailto:junyonglee@p
 
 ## Resources
 
-All material related to our paper is available via the following links:
+All material related to our paper is available by following links:
 
 | Link |
 | :-------------- |
@@ -94,7 +94,7 @@ python run.py --mode [MODE] --data [DATASET]
 1. Download pretrained weights from [here](https://www.dropbox.com/s/grxohabacw0h7hz/checkpoints.zip?dl=0).
 Then, unzip them under `./checkpoints`.
 
-2. Download and Place test sets ([DPDD](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel), [RealDOF](https://www.dropbox.com/s/3l5gt3zz1zad5zl/RealDOF.zip?dl=0), [PixelDP](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008) and [CUHK](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) under `./test` (the offset can be modified in `./configs/config.py`).
+2. (TODO) Download and Place test sets ([DPDD](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel), [RealDOF](https://www.dropbox.com/s/3l5gt3zz1zad5zl/RealDOF.zip?dl=0), [PixelDP](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008) and [CUHK](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) under `./test` (the offset can be modified in `./configs/config.py`).
 
 3. To test the network, type:
 * to test the final model 
