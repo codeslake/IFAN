@@ -122,7 +122,7 @@ python run.py --mode FD --network IFAN --config config_IFAN --eval_mode quan --d
 python run.py --mode FR --network F --config config_FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
 
 ## Table 4 in the main paper
-# Our final model with N=8 
+# Our final model with N=8
 python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
 
 # Our final model with N=26
@@ -143,7 +143,7 @@ python run.py --mode IFAN_FAC --network IFAN_FAC --config config_IFAN_FAC --eval
 python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
 
 ## Table 2 in the supplementary material
-# Our model for dual-pixel stereo inputs
+# Our model for dual-pixel stereo inputs 
 python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
 ```
 
