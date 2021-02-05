@@ -99,7 +99,7 @@ Then, unzip them under `./checkpoints`.
 
 2. Download and Place test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
 
-3. To test the network, type:
+3. Test 
 * to test the final model,
 ```bash
 # Our final model 
