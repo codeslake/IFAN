@@ -105,22 +105,6 @@ python run.py --mode IFAN --network IFAN --config config_IFAN --eval_mode quan -
 
 * to test models used for evaluation
 ```bash
-## Table 2 in the main paper
-# The baseline model
-python run.py --mode B --network B --config config_B --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/B.pytorch
-
-# D
-python run.py --mode D --network D --config config_D --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/D.pytorch
-
-# F
-python run.py --mode F --network F --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/F.pytorch
-
-# FD
-python run.py --mode FD --network IFAN --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FD.pytorch
-
-# FR
-python run.py --mode FR --network F --config config_FR --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/FR.pytorch
-
 ## Table 4 in the main paper
 # Our final model with N=8
 python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
@@ -133,10 +117,6 @@ python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --eval_mode 
 
 # Our final model with N=44
 python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
-
-## Table 5 in the main paper
-# IFAN in which the IAC layer replaced with the FAC layer (TODO)
-python run.py --mode IFAN_FAC --network IFAN_FAC --config config_IFAN_FAC --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_FAC.pytorch
 
 ## Table 1 in the supplementary material
 # Our model trained with 16 bit images
