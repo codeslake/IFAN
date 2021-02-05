@@ -280,7 +280,7 @@ if __name__ == '__main__':
 
     else:
         from eval import *
-        from configs.config import get_config
+        from configs.config import get_config, set_eval_path
         from easydict import EasyDict as edict
         print(toGreen('Laoding Config for evaluation'))
         if args.config is None:
@@ -314,8 +314,9 @@ if __name__ == '__main__':
         config.EVAL.load_ckpt_by_score = args.ckpt_score
 
         config.dist = args.dist
-        config.EVAL.mode = args.eval_mode
+        config.EVAL.eval_mode = args.eval_mode
         config.EVAL.data = args.data
+        config = set_eval_path(config, config.EVAL.data)
 
         print(toRed('\tProject : {}'.format(config.project)))
         print(toRed('\tMode : {}'.format(config.mode)))

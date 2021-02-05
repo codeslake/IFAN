@@ -79,18 +79,20 @@ def get_config(project = '', mode = '', config_ = ''):
 
     ################################## VALIDATION ###################################
     # data path
-    offset = ''
     config.VAL = edict()
-    config.VAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/val_c'
-    config.VAL.l_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/val_l'
-    config.VAL.r_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/val_r'
-    config.VAL.d_path = '/data1/junyonglee/dd_dp_dataset_canon/DMENet/test_c'
+    # config.VAL.val_offset = 'test'
+    config.VAL.val_offset = '/data1/junyonglee'
+    config.VAL.c_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_c')
+    config.VAL.l_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_l')
+    config.VAL.r_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_r')
     config.VAL.input_path = 'source' # os.path.join(config.VAL.data_path, 'input')
     config.VAL.gt_path = 'target' # os.path.join(config.VAL.data_path, 'gt')
 
     ##################################### EVAL ######################################
     config.EVAL = edict()
-    config.EVAL.eval_mode = 'eval'
+    config.EVAL.eval_mode = 'quan'
+    config.EVAL.data = 'DPDD' # DPDD/PixelDP/RealDOF/CUHK
+
     config.EVAL.load_ckpt_by_score = True
     config.EVAL.ckpt_name = None
     config.EVAL.ckpt_epoch = None
@@ -99,21 +101,34 @@ def get_config(project = '', mode = '', config_ = ''):
     config.EVAL.ckpt_load_path = None
 
     # data dir
-    offset = ''
-    config.EVAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_c'
-    config.EVAL.l_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_l'
-    config.EVAL.r_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_r'
-    config.EVAL.d_path = '/data1/junyonglee/dd_dp_dataset_canon/DMENet/test_c'
+    # config.EVAL.test_offset = 'test'
+    config.EVAL.test_offset = '/data1/junyonglee'
+    config.EVAL.c_path = None
+    config.EVAL.l_path = None
+    config.EVAL.r_path = None
 
     config.EVAL.input_path = 'source' # os.path.join(offset, 'input')
     config.EVAL.gt_path = 'target' # os.path.join(offset, 'gt')
 
-    config.EVAL.mode = 'quan' # quantitative
-    config.EVAL.data = 'DPDD' # DP/pixel
-
     # log dir
     config.EVAL.LOG_DIR = edict()
     config.EVAL.LOG_DIR.save = os.path.join(config.LOG_DIR.offset, 'result')
+
+    return config
+
+def set_eval_path(config, data):
+    if data == 'DPDD':
+        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_c')
+        config.EVAL.l_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_l')
+        config.EVAL.r_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_r')
+    elif data == 'PixelDP':
+        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_c')
+        config.EVAL.l_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_l')
+        config.EVAL.r_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_r')
+    elif data == 'RealDOF':
+        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'RealDOF/test_c')
+    elif data == 'CUHK':
+        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'CUHK/test_c')
 
     return config
 
