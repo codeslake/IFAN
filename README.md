@@ -40,7 +40,10 @@ All material related to our paper is available by following links:
 | [The RealDOF test set](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0) |
 
 ## Training & testing of the network
+*Requirements*: `pip install -r requirements.txt`
 ### Training
+>Download and Place [DPDD dataset](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0) under `./datasets` (the offset can be modified by `config.data_offset` in `./configs/config.py`).
+
 ```bash
 # multi GPU (with DistributedDataParallel) example
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_node=4 --master_port=9000 run.py \
@@ -94,7 +97,7 @@ python run.py --mode [MODE] --data [DATASET]
 1. Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0).
 Then, unzip them under `./checkpoints`.
 
-2. (TODO) Download and Place test sets ([DPDD](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0)) under `./test` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
+2. Download and Place test sets ([DPDD](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
 
 3. To test the network, type:
 * to test the final model,

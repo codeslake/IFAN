@@ -44,14 +44,11 @@ def get_config(project = '', mode = '', config_ = ''):
     config.beta1 = 0.9
 
     # data dir
-    config.lmdb = False
-    config.lmdb_path = '/data1/junyonglee/dd_dp_dataset_canon/lmdb/DP'
-
-    config.c_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/train_c'
-    config.l_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/train_l'
-    config.r_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/train_r'
-    config.d_path = '/data1/junyonglee/dd_dp_dataset_canon/DMENet/train_c'
-    config.m_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/train_c/sharp_mask_target'
+    # config.data_offset = '/data1/junyonglee'
+    config.data_offset = 'datasets'
+    config.c_path = os.path.join(config.data_offset, 'DPDD/train_c')
+    config.l_path = os.path.join(config.data_offset, 'DPDD/train_l')
+    config.r_path = os.path.join(config.data_offset, 'DPDD/train_r')
 
     config.input_path = 'source'
     config.gt_path = 'target'
@@ -80,11 +77,9 @@ def get_config(project = '', mode = '', config_ = ''):
     ################################## VALIDATION ###################################
     # data path
     config.VAL = edict()
-    config.VAL.val_offset = 'test'
-    # config.VAL.val_offset = '/data1/junyonglee'
-    config.VAL.c_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_c')
-    config.VAL.l_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_l')
-    config.VAL.r_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_r')
+    config.VAL.c_path = os.path.join(config.data_offset, 'DPDD/val_c')
+    config.VAL.l_path = os.path.join(config.data_offset, 'DPDD/val_l')
+    config.VAL.r_path = os.path.join(config.data_offset, 'DPDD/val_r')
     config.VAL.input_path = 'source' # os.path.join(config.VAL.data_path, 'input')
     config.VAL.gt_path = 'target' # os.path.join(config.VAL.data_path, 'gt')
 
@@ -101,7 +96,7 @@ def get_config(project = '', mode = '', config_ = ''):
     config.EVAL.ckpt_load_path = None
 
     # data dir
-    config.EVAL.test_offset = 'test'
+    config.EVAL.test_offset = 'datasets'
     # config.EVAL.test_offset = '/data1/junyonglee'
     config.EVAL.c_path = None
     config.EVAL.l_path = None

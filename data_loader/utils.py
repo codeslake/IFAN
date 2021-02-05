@@ -56,17 +56,6 @@ def color_to_gray(img):
 
     return img
 
-def color_to_gray_prl(img):
-    c_linear = 0.2126*img[:, :, :, 0] + 0.7152*img[:, :, :, 1] + 0.07228*img[:, :, :, 2]
-    c_linear_temp = c_linear.copy()
-
-    c_linear_temp[np.where(c_linear <= 0.0031308)] = 12.92 * c_linear[np.where(c_linear <= 0.0031308)]
-    c_linear_temp[np.where(c_linear > 0.0031308)] = 1.055 * np.power(c_linear[np.where(c_linear > 0.0031308)], 1.0/2.4) - 0.055
-
-    img = np.repeat(np.expand_dims(c_linear_temp, 3), 3, axis = 3)
-
-    return img
-
 def refine_image(img, val = 16):
     shape = img.shape
     if len(shape) == 4:
@@ -79,12 +68,14 @@ def refine_image(img, val = 16):
         h, w = shape[:2]
         return img[0 : h - h % val, 0 : w - w % val]
 
-def get_dict_array_by_key(key, array_num):
-    data_holder = collections.OrderedDict()
-    for holder_name in key:
-        data_holder[holder_name] = [None] * array_num
+def refine_image_pt(image, val = 16):
+    size = image.size()
+    h = size[2]
+    w = size[3]
+    refine_h = h - h % val
+    refine_w = w - w % val
 
-    return data_holder
+    return image[:, :, :refine_h, :refine_w]
 
 def load_file_list(root_path, child_path = None):
     folder_paths = []

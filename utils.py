@@ -25,20 +25,6 @@ def remove_file_end_with(path, regex):
     for i in np.arange(len(file_paths)):
         os.remove(file_paths[i])
 
-def norm_image(image, axis = (1, 2, 3)):
-    image = image - np.amin(image, axis = axis, keepdims=True)
-    image = image / np.amax(image, axis = axis, keepdims=True)
-    return image
-
-def refine_image(image, val = 32):
-    size = image.size()
-    h = size[2]
-    w = size[3]
-    refine_h = h - h % val
-    refine_w = w - w % val
-
-    return image[:, :, :refine_h, :refine_w]
-
 def toRed(content):
     return termcolor.colored(content,"red",attrs=["bold"])
 

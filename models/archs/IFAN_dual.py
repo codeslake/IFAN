@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as Func
 import collections
+
 from models.utils import DPD
 from models.nn_common import conv, upconv, resnet_block
-
-import time
+from models.IAC import IAC
 
 class Network(nn.Module):
     def __init__(self, config):
@@ -144,13 +144,7 @@ class Network(nn.Module):
         F = self.F(f)
 
         # IAC
-        Fs = torch.split(F[:, :self.N * (self.ch4 * self.Fs * 2), :, :], self.ch4 * self.Fs * 2, dim = 1)
-        F_bs = torch.split(F[:, self.N * (self.ch4 * self.Fs * 2):, :, :], self.ch4, dim = 1)
-        for i in range(self.N):
-            F1, F2= torch.split(Fs[i], self.ch4 * self.Fs, dim = 1)
-            f = SAC(feat_in=f_C if i == 0 else f, kernel1=F1, kernel2=F2, ksize=self.Fs) ## image
-            f = f + F_bs[i]
-            f = Func.leaky_relu(f, 0.1, inplace=True)
+        f = IAC(f_C, F, self.N, self.ch4, self.Fs)
 
         # reconstructor
         f = self.conv_res(f)
@@ -184,26 +178,3 @@ class Network(nn.Module):
             outs['f_L'] = Func.interpolate(L, scale_factor=1/8, mode='area')
 
         return outs
-
-##########################################################################
-def SAC(feat_in, kernel1, kernel2, ksize):
-    channels = feat_in.size(1)
-    N, kernels, H, W = kernel1.size()
-    pad = (ksize - 1) // 2
-
-    feat_in = Func.pad(feat_in, (0, 0, pad, pad), mode="replicate")
-    feat_in = feat_in.unfold(2, ksize, 1)
-    feat_in = feat_in.permute(0, 2, 3, 1, 4).reshape(N, H, W, channels, -1)
-
-    kernel1 = kernel1.permute(0, 2, 3, 1).reshape(N, H, W, channels, ksize)
-    feat_in = torch.sum(torch.mul(feat_in.contiguous(), kernel1.contiguous()), -1)
-    feat_in = feat_in.permute(0, 3, 1, 2).contiguous()
-
-    feat_in = Func.pad(feat_in, (pad, pad, 0, 0), mode="replicate")
-    feat_in = feat_in.unfold(3, ksize, 1)
-    feat_in = feat_in.permute(0, 2, 3, 1, 4).reshape(N, H, W, channels, -1)
-    kernel2 = kernel2.permute(0, 2, 3, 1).reshape(N, H, W, channels, ksize)
-    feat_in = torch.sum(torch.mul(feat_in.contiguous(), kernel1.contiguous()), -1)
-    feat_out = feat_in.permute(0, 3, 1, 2).contiguous()
-
-    return feat_out

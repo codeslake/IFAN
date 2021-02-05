@@ -1,0 +1,12 @@
+easydict==1.9
+ipython==7.20.0
+opencv-python==4.5.1.48
+ptflops==0.6.4
+scikit-image==0.18.1
+scikit-learn==0.24.1
+scipy==1.6.0
+sklearn==0.0
+tensorboardX==2.1
+termcolor==1.1.0
+torch-optimizer==0.1.0
+tqdm==4.56.0

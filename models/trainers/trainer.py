@@ -9,12 +9,15 @@ import torch_optimizer as optim
 import torch.nn.utils as torch_utils
 
 from utils import *
+from data_loader.utils import *
 from models.utils import *
 from models.baseModel import baseModel
 import models.archs.LPIPS as LPIPS
 from models.archs.RBN import Network as reblurNet
 
-import models.lr_scheduler as lr_scheduler
+from data_loader.DP_datasets_lr_aug import datasets
+
+import models.trainers.lr_scheduler as lr_scheduler
 
 from data_loader.data_sampler import DistIterSampler
 
@@ -62,7 +65,7 @@ class Model(baseModel):
         if self.rank <= 0:
             print(toGreen('Computing model complexity...'))
             with torch.no_grad():
-                flops,params = get_model_complexity_info(self.network.Network, (1, 3, 720, 1280), input_constructor = self.network.input_constructor, as_strings=False,print_per_layer_stat=config.is_verbose)
+                Macs,params = get_model_complexity_info(self.network.Network, (1, 3, 720, 1280), input_constructor = self.network.input_constructor, as_strings=False,print_per_layer_stat=config.is_verbose)
 
         ### DDP ###
         if config.dist:
@@ -72,11 +75,11 @@ class Model(baseModel):
             self.network = DP(self.network).to(torch.device('cuda'))
 
         if self.rank <= 0:
-            print('{:<30}  {:<8} B'.format('Computational complexity (Flops): ', flops / 1000 ** 3 ))
+            print('{:<30}  {:<8} B'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 ))
             print('{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2))
             if self.is_train:
                 with open(config.LOG_DIR.offset + '/cost.txt', 'w') as f:
-                    f.write('{:<30}  {:<8} B\n'.format('Computational complexity (Flops): ', flops / 1000 ** 3 ))
+                    f.write('{:<30}  {:<8} B\n'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 ))
                     f.write('{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2))
                     f.close()
 
@@ -128,12 +131,6 @@ class Model(baseModel):
         self.sampler_train = None
         self.sampler_eval = None
 
-        if self.config.lmdb is False:
-            from data_loader.DP_datasets_lr_aug import datasets
-        else:
-            if self.rank <= 0: print(toRed('\tLMDB!'))
-            from data_loader.DP_datasets_lr_aug_lmdb import datasets
-
         self.dataset_train = datasets(self.config, is_train = True)
         self.dataset_eval = datasets(self.config, is_train = False)
 
@@ -166,12 +163,12 @@ class Model(baseModel):
 
         # # save visuals (inputs)
         # self.results['inputs'] = collections.OrderedDict()
-        # self.results['inputs']['R'] = refine_image(inputs['r'], 8)
-        # self.results['inputs']['L'] = refine_image(inputs['l'], 8)
-        # self.results['inputs']['GT'] = refine_image(inputs['gt'], 8)
-        # self.results['inputs']['R_down'] = F.interpolate(refine_image(inputs['r'], 8), scale_factor=1/8, mode='area')
-        # self.results['inputs']['L_down'] = F.interpolate(refine_image(inputs['l'], 8), scale_factor=1/8, mode='area')
-        # self.results['inputs']['GT_down'] = F.interpolate(refine_image(inputs['gt'], 8), scale_factor=1/8, mode='area')
+        # self.results['inputs']['R'] = refine_image_pt(inputs['r'], 8)
+        # self.results['inputs']['L'] = refine_image_pt(inputs['l'], 8)
+        # self.results['inputs']['GT'] = refine_image_pt(inputs['gt'], 8)
+        # self.results['inputs']['R_down'] = F.interpolate(refine_image_pt(inputs['r'], 8), scale_factor=1/8, mode='area')
+        # self.results['inputs']['L_down'] = F.interpolate(refine_image_pt(inputs['l'], 8), scale_factor=1/8, mode='area')
+        # self.results['inputs']['GT_down'] = F.interpolate(refine_image_pt(inputs['gt'], 8), scale_factor=1/8, mode='area')
 
         # # save visuals (outputs)
         # self.results['outs'] = {'result': outs['result']}
@@ -239,10 +236,10 @@ class Model(baseModel):
         inputs['gt'] = inputs['gt'].to(torch.device('cuda'))
 
         # init inputs
-        C = refine_image(inputs['c'], 8)
-        R = refine_image(inputs['r'], 8)
-        L = refine_image(inputs['l'], 8)
-        GT = refine_image(inputs['gt'], 8)
+        C = refine_image_pt(inputs['c'], 8)
+        R = refine_image_pt(inputs['r'], 8)
+        L = refine_image_pt(inputs['l'], 8)
+        GT = refine_image_pt(inputs['gt'], 8)
 
         # run network / get results and losses / update network, get learning rate
         errs, outs = self._get_results(C, R, L, GT, is_train)
@@ -281,7 +278,7 @@ class DeblurNet(nn.Module):
         self.Network.apply(self.weights_init)
         self.Network.init_F()
         if 'R' in self.config.mode or 'IFAN' in self.config.mode:
-            self.reblurNet.apply(self.reblurNet.weights_init)
+            self.reblurNet.apply(self.weights_init)
             self.reblurNet.init_F()
 
     def input_constructor(self, res):

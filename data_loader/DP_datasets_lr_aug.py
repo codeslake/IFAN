@@ -1,7 +1,3 @@
-'''
-REDS dataset
-support reading images from lmdb, image folder and memcached
-'''
 import os
 import random
 import numpy as np
@@ -36,17 +32,6 @@ class datasets(data.Dataset):
 
         self.len = int(np.ceil(len(self.l_file_path_list)))
 
-        # self.l_frames = []
-        # for i in range(len(self.l_file_path_list)):
-        #     self.l_frames.append(read_frame(self.l_file_path_list[i], self.norm_val))
-        # self.r_frames = []
-        # for i in range(len(self.r_file_path_list)):
-        #     self.r_frames.append(read_frame(self.r_file_path_list[i], self.norm_val))
-        # self.gt_frames = []
-        # for i in range(len(self.gt_file_path_list)):
-        #     self.gt_frames.append(read_frame(self.gt_file_path_list[i], self.norm_val))
-            
-
     def __len__(self):
         return self.len
 
@@ -58,24 +43,12 @@ class datasets(data.Dataset):
         c_frame = read_frame(self.c_file_path_list[index], self.norm_val)
         gt_frame = read_frame(self.gt_file_path_list[index], self.norm_val)
 
-        # l_frame = l_frames[index]
-        # r_frame = r_frames[index]
-        # gt_frame = gt_frames[index]
-
         if self.is_augment:
-            # Flip
-            # if random.uniform(0, 1) <= 0.5:
-            #     l_frame = np.flip(l_frame, axis = 3)
-            #     r_frame = np.flip(r_frame, axis = 3)
-            #     gt_frame = np.flip(gt_frame, axis = 3)
-
             # Noise
             if random.uniform(0, 1) <= 0.05:
             # if random.uniform(0, 1) >= 0.0:
                 row,col,ch = l_frame[0].shape
                 mean = 0
-                # var = random.uniform(0.001, 0.005)
-                # sigma = var**0.5
                 var = random.uniform(0.001, self.max_sig**2)
                 sigma = self.max_sig
                 gauss = np.random.normal(mean,sigma,(row,col,ch))
@@ -88,7 +61,6 @@ class datasets(data.Dataset):
 
             # Grayscale
             if random.uniform(0, 1) <= 0.3:
-            # if random.uniform(0, 1) >= 0.0:
                 l_frame = np.expand_dims(color_to_gray(l_frame[0]), axis = 0)
                 r_frame = np.expand_dims(color_to_gray(r_frame[0]), axis = 0)
                 c_frame = np.expand_dims(color_to_gray(c_frame[0]), axis = 0)
@@ -96,7 +68,6 @@ class datasets(data.Dataset):
 
             # Scaling
             if random.uniform(0, 1) <= 0.5:
-            # if random.uniform(0, 1) >= 0.0:
                 scale = random.uniform(0.7, 1.0)
                 row,col,ch = l_frame[0].shape
 

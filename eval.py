@@ -57,25 +57,6 @@ def init(config, mode = 'deblur'):
     save_path_root_deblur = os.path.join(save_path_root_deblur, config.EVAL.data, date)
     Path(save_path_root_deblur).mkdir(parents=True, exist_ok=True)
 
-    # config.EVAL.c_path = None
-    # config.EVAL.l_path = None
-    # config.EVAL.r_path = None
-
-    # if config.EVAL.data == 'DPDD':
-    #     config.EVAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_c'
-    #     config.EVAL.l_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_l'
-    #     config.EVAL.r_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_png/test_r'
-    # elif config.EVAL.data == 'pixel':
-    #     config.EVAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_pixel/test_c'
-    #     config.EVAL.l_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_pixel/test_l'
-    #     config.EVAL.r_path = '/data1/junyonglee/dd_dp_dataset_canon/dd_dp_dataset_pixel/test_r'
-    # elif config.EVAL.data == 'RealDOF':
-    #     config.EVAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/RealDOF_testset/test_c'
-    # elif config.EVAL.data == 'CUHK':
-    #     config.EVAL.c_path = '/data1/junyonglee/dd_dp_dataset_canon/CUHK/test_c'
-
-    print(config.EVAL.c_path, config.EVAL.input_path)
-
     input_c_folder_path_list, input_c_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.input_path)
     if config.EVAL.l_path is not None:
         input_l_folder_path_list, input_l_file_path_list, _ = load_file_list(config.EVAL.l_path, config.EVAL.input_path)
