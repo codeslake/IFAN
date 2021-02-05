@@ -97,13 +97,13 @@ Then, unzip them under `./checkpoints`.
 2. (TODO) Download and Place test sets ([DPDD](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0)) under `./test` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
 
 3. To test the network, type:
-* to test the final model 
+* to test the final model,
 ```bash
 # Our final model 
 python run.py --mode IFAN --network IFAN --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
 ```
 
-* to test models used for evaluation
+* to test models used for evaluation,
 ```bash
 ## Table 4 in the main paper
 # Our final model with N=8
