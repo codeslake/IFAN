@@ -19,7 +19,7 @@ def get_config(project = '', mode = '', config = ''):
 
     # weight init
     config.wi = 1.0
-    config.wiF = 1.0
+    config.wiF = 1.5
 
     # for reblurring
     config.RBFs = 3
