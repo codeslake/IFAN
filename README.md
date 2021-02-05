@@ -94,7 +94,7 @@ python run.py --mode [MODE] --data [DATASET]
 1. Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0).
 Then, unzip them under `./checkpoints`.
 
-2. (TODO) Download and Place test sets ([DPDD](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0), [RealDOF](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0), [PixelDP](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0) and [CUHK](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0)) under `./test` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
+2. (TODO) Download and Place test sets ([DPDD](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0)) under `./test` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
 
 3. To test the network, type:
 * to test the final model 
