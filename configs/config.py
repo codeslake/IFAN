@@ -80,8 +80,8 @@ def get_config(project = '', mode = '', config_ = ''):
     ################################## VALIDATION ###################################
     # data path
     config.VAL = edict()
-    # config.VAL.val_offset = 'test'
-    config.VAL.val_offset = '/data1/junyonglee'
+    config.VAL.val_offset = 'test'
+    # config.VAL.val_offset = '/data1/junyonglee'
     config.VAL.c_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_c')
     config.VAL.l_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_l')
     config.VAL.r_path = os.path.join(config.VAL.val_offset, 'dd_dp_dataset_png/val_r')
@@ -101,8 +101,8 @@ def get_config(project = '', mode = '', config_ = ''):
     config.EVAL.ckpt_load_path = None
 
     # data dir
-    # config.EVAL.test_offset = 'test'
-    config.EVAL.test_offset = '/data1/junyonglee'
+    config.EVAL.test_offset = 'test'
+    # config.EVAL.test_offset = '/data1/junyonglee'
     config.EVAL.c_path = None
     config.EVAL.l_path = None
     config.EVAL.r_path = None
