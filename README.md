@@ -97,7 +97,7 @@ python run.py --mode [MODE] --data [DATASET]
 ## Testing with pre-trained weights of CVPR2021
 > Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0). Then, unzip them under `./checkpoints`.
 
-> Download and Place test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
+> Download and place test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
 
 >  To test models with any images, place the images under the folder  create a folder `./datasets/any`.
 >  
@@ -106,7 +106,7 @@ python run.py --mode [MODE] --data [DATASET]
     # Our final model 
     python run.py --mode IFAN --network IFAN --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
     ```
-    * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP, any`, and their path can be modified by the function `set_eval_path(..)` in `./configs/config.py`.
+    * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP, any`, and their path can be modified by the function `set_eval_path(..)` in `./configs/config.py`. `--data any` is for testing models with any images, which should be placed under the folder `./datasets/any`. 
 
 
 2. To test our models used for evaluations in the paper,
