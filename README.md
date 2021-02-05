@@ -1,4 +1,5 @@
 
+
 # Iterative Filter Adaptive Network for Single Image Defocus Deblurring
 ![Python 3.8.5](https://img.shields.io/badge/python-3.8.5-green.svg?style=plastic)
 ![PyTorch 1.6.0](https://img.shields.io/badge/PyTorch-1.6.0-green.svg?style=plastic)
@@ -87,53 +88,50 @@ python run.py --mode [MODE] --data [DATASET]
 ```
 * options
     * `--mode`: The name of the training mode that you want to test.
-    * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP`, and their path can be modified in `./configs/config.py`.
+    * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP, any`, and their path can be modified by the function `set_eval_path(..)` in `./configs/config.py`.
     * `-ckpt_name`: Load sthe checkpoint with the name of the checkpoint under `./logs/Defocus_Deblurring/[mode]/checkpoint/train/epoch/ckpt/` (e.g., `python run.py --mode IFAN --data DPDD --ckpt_name IFAN_00000.pytorch`).
     * `-ckpt_abs_name`. Loads the checkpoint of the absolute path (e.g., `python run.py --mode IFAN --data DPDD --ckpt_abs_name ./checkpoints/IFAN.pytorch`).
     * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 0`). 
     * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
 
 ## Testing with pre-trained weights of CVPR2021
-1. Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0).
-Then, unzip them under `./checkpoints`.
+> Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0). Then, unzip them under `./checkpoints`.
 
-2. Download and Place test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
+> Download and Place test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
 
-3. Test 
-* to test the final model,
-```bash
-# Our final model 
-python run.py --mode IFAN --network IFAN --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
-```
-* to test the final model with any images create a folder `./datasets/any` and place any images under the folder. Then, run following:
-```bash
-# Our final model 
-python run.py --mode IFAN --network IFAN --config config_IFAN --data any --ckpt_abs_name checkpoints/IFAN.pytorch
-```
+>  To test models with any images, place the images under the folder  create a folder `./datasets/any`.
+>  
+1. To test the final model,
+    ```bash
+    # Our final model 
+    python run.py --mode IFAN --network IFAN --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
+    ```
+    * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP, any`, and their path can be modified by the function `set_eval_path(..)` in `./configs/config.py`.
 
-* to test models used for evaluation in the paper,
-```bash
-## Table 4 in the main paper
-# Our final model with N=8
-python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
 
-# Our final model with N=26
-python run.py --mode IFAN_26 --network IFAN --config config_IFAN_26 --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
+2. To test our models used for evaluations in the paper,
+    ```bash
+    ## Table 4 in the main paper
+    # Our final model with N=8
+    python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
 
-# Our final model with N=35
-python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
+    # Our final model with N=26
+    python run.py --mode IFAN_26 --network IFAN --config config_IFAN_26 --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
 
-# Our final model with N=44
-python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
+    # Our final model with N=35
+    python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
 
-## Table 1 in the supplementary material
-# Our model trained with 16 bit images
-python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
+    # Our final model with N=44
+    python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
 
-## Table 2 in the supplementary material
-# Our model for dual-pixel stereo inputs 
-python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
-```
+    ## Table 1 in the supplementary material
+    # Our model trained with 16 bit images
+    python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
+
+    ## Table 2 in the supplementary material
+    # Our model for dual-pixel stereo inputs 
+    python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
+    ```
 
 
 ## License ##
