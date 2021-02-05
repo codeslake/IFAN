@@ -71,10 +71,10 @@ CUDA_VISIBLE_DEVICES=0 python -B run.py \
     * `--config`: The name of config file located as in `./config/[config].py`.
     * `--trainer`: The name of trainer  file located as in `./models/trainers/[trainer].py`.
     * `--network`: The name of network file located as in `./models/archs/[network].py`.
-    * `-b`: The batch size. For the multi GPU (`DistributedDataParallel`), total batch size will be, `nproc_per_node * b`.
+    * `-b`: The batch size. For the multi GPU (`DistributedDataParallel`), the total batch size will be, `nproc_per_node * b`.
     * `-th`: The number of thread (`num_workers`) used for the data loader (defined in `./models/baseModel`).
     * `-dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). Option works only when `--is_train` is specified.
-    * `-r`: Resume trining with specified epoch # (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
+    * `-r`: Resume training with specified epoch # (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
     * `-dist`: whether to use `DistributedDataParallel`.
 
 ### Testing
@@ -84,7 +84,7 @@ python run.py --mode [MODE] --data [DATASET]
 ```
 * options
     * `--mode`: The name of the training mode that you want to test.
-    * `--data`: The name of dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP`, and their path can be modified in `./configs/config.py`.
+    * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP`, and their path can be modified in `./configs/config.py`.
     * `-ckpt_name`: Load sthe checkpoint with the name of the checkpoint under `./logs/Defocus_Deblurring/[mode]/checkpoint/train/epoch/ckpt/` (e.g., `python run.py --mode IFAN --data DPDD --ckpt_name IFAN_00000.pytorch`).
     * `-ckpt_abs_name`. Loads the checkpoint of the absolute path (e.g., `python run.py --mode IFAN --data DPDD --ckpt_abs_name ./checkpoints/IFAN.pytorch`).
     * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 0`). 
@@ -130,12 +130,12 @@ python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --eval_m
 ## License ##
 This software is being made available under the terms in the [LICENSE](LICENSE) file.
 
-Any exemptions to these terms requires a license from the Pohang University of Science and Technology.
+Any exemptions to these terms require a license from the Pohang University of Science and Technology.
 
 ## About Coupe Project ##
-Project ‘COUPE’ aims to develop software that evaluates and improves the quality of images and videos based on big visual data. To achieve the goal, we extract sharpness, color, composition features from images and develop technologies for restoring and improving by using it. In addition,ersonalization technology through userreference analysis is under study.  
+Project ‘COUPE’ aims to develop software that evaluates and improves the quality of images and videos based on big visual data. To achieve the goal, we extract sharpness, color, composition features from images and develop technologies for restoring and improving by using them. In addition, personalization technology through user reference analysis is under study.  
     
-Please checkout out other Coupe repositories in our [Posgraph](https://github.com/posgraph) github organization.
+Please checkout other Coupe repositories in our [Posgraph](https://github.com/posgraph) github organization.
 
 ## Useful Links ##
 * [Coupe Library](http://coupe.postech.ac.kr/)
