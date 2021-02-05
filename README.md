@@ -34,10 +34,10 @@ All material related to our paper is available by following links:
 | [The main paper (todo)](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
 | [Supplementary Files (todo)](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
 | [Checkpoint Files](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0) |
-| The DPDD dataset ([download](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0)/[reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
-| The CUHK dataset ([download](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0)/[reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
-| The PixelDP test set ([download](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0)/[reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
-| [The RealDOF test set](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0) |
+| The DPDD dataset ([download](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0)/[reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
+| The PixelDP test set ([download](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0)/[reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
+| The CUHK dataset ([download](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0)/[reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
+| [The RealDOF test set](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0) |
 
 ## Training & testing of the network
 *Requirements*: `pip install -r requirements.txt`
@@ -97,38 +97,44 @@ python run.py --mode [MODE] --data [DATASET]
 1. Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0).
 Then, unzip them under `./checkpoints`.
 
-2. Download and Place test sets ([DPDD](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
+2. Download and Place test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
 
 3. To test the network, type:
 * to test the final model,
 ```bash
 # Our final model 
-python run.py --mode IFAN --network IFAN --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
+python run.py --mode IFAN --network IFAN --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
+```
+* to test the final model with any images create a folder `./datasets/any` and place any images under the folder. Then, run following:
+```bash
+# Our final model 
+python run.py --mode IFAN --network IFAN --config config_IFAN --data any --ckpt_abs_name checkpoints/IFAN.pytorch
 ```
 
-* to test models used for evaluation,
+* to test models used for evaluation in the paper,
 ```bash
 ## Table 4 in the main paper
 # Our final model with N=8
-python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
+python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
 
 # Our final model with N=26
-python run.py --mode IFAN_26 --network IFAN --config config_IFAN_26 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
+python run.py --mode IFAN_26 --network IFAN --config config_IFAN_26 --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
 
 # Our final model with N=35
-python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
+python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
 
 # Our final model with N=44
-python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
+python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
 
 ## Table 1 in the supplementary material
 # Our model trained with 16 bit images
-python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
+python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
 
 ## Table 2 in the supplementary material
 # Our model for dual-pixel stereo inputs 
-python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --eval_mode quan --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
+python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
 ```
+
 
 ## License ##
 This software is being made available under the terms in the [LICENSE](LICENSE) file.
