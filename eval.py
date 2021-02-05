@@ -57,30 +57,35 @@ def init(config, mode = 'deblur'):
     save_path_root_deblur = os.path.join(save_path_root_deblur, config.EVAL.data, date)
     Path(save_path_root_deblur).mkdir(parents=True, exist_ok=True)
 
-    input_c_folder_path_list, input_c_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.input_path)
-    if config.EVAL.l_path is not None:
-        input_l_folder_path_list, input_l_file_path_list, _ = load_file_list(config.EVAL.l_path, config.EVAL.input_path)
-        input_r_folder_path_list, input_r_file_path_list, _ = load_file_list(config.EVAL.r_path, config.EVAL.input_path)
-    else:
-        input_l_folder_path_list = input_c_folder_path_list
-        input_l_file_path_list = input_c_file_path_list
-        input_r_folder_path_list = input_c_folder_path_list
-        input_r_file_path_list = input_c_file_path_list
+    input_l_file_path_list = None
+    input_r_file_path_list = None
+    gt_file_path_list = None
 
-    gt_folder_path_list, gt_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.gt_path)
+    _, input_c_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.input_path)
+    if config.EVAL.l_path is not None:
+        _, input_l_file_path_list, _ = load_file_list(config.EVAL.l_path, config.EVAL.input_path)
+        _, input_r_file_path_list, _ = load_file_list(config.EVAL.r_path, config.EVAL.input_path)
+    if config.EVAL.gt_path is not None:
+        _, gt_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.gt_path)
 
     save_path_deblur = os.path.join(save_path_root_deblur)
     Path(save_path_deblur).mkdir(parents=True, exist_ok=True)
 
     return network, save_path_deblur, save_path_root_deblur_score, ckpt_name, input_c_file_path_list, input_l_file_path_list, input_r_file_path_list, gt_file_path_list
 
-def eval_quan(config):
-    mode = 'quantitative'
-    network, save_path_deblur, save_path_root_deblur_score, ckpt_name, input_c_file_path_list, input_l_file_path_list, input_r_file_path_list, gt_file_path_list = init(config, mode)
+def eval_quan_qual(config):
+    mode = 'quanti_quali'
+    network, save_path_deblur, save_path_root_deblur_score, ckpt_name,\
+    input_c_file_path_list, input_l_file_path_list, input_r_file_path_list, gt_file_path_list = init(config, mode)
 
     ##
     time_norm = 0
     total_itr_time = 0
+
+    PSNR = 0
+    SSIM  = 0
+    MAE = 0
+    LPIPs = 0
     PSNR_mean = 0.
     SSIM_mean = 0.
     MAE_mean = 0.
@@ -90,23 +95,28 @@ def eval_quan(config):
     for i, frame_name in enumerate(input_c_file_path_list):
         refine_val = 16
 
-        if config.EVAL.data == 'pixel':
+        if config.EVAL.data == 'PixelDP':
             rotate = cv2.ROTATE_90_COUNTERCLOCKWISE
         else:
             rotate = None
 
-        L = refine_image(read_frame(input_l_file_path_list[i], config.norm_val, rotate), refine_val)
-        L = torch.FloatTensor(L.transpose(0, 3, 1, 2).copy()).cuda()
-
-        R = refine_image(read_frame(input_r_file_path_list[i], config.norm_val, rotate), refine_val)
-        R = torch.FloatTensor(R.transpose(0, 3, 1, 2).copy()).cuda()
-
+        # Read image
         C = refine_image(read_frame(input_c_file_path_list[i], config.norm_val, rotate), refine_val)
         C = torch.FloatTensor(C.transpose(0, 3, 1, 2).copy()).cuda()
 
-        GT = refine_image(read_frame(gt_file_path_list[i], config.norm_val, rotate), refine_val)
-        GT = torch.FloatTensor(GT.transpose(0, 3, 1, 2).copy()).cuda()
+        if input_l_file_path_list is not None:
+            L = refine_image(read_frame(input_l_file_path_list[i], config.norm_val, rotate), refine_val)
+            L = torch.FloatTensor(L.transpose(0, 3, 1, 2).copy()).cuda()
 
+        if input_r_file_path_list is not None:
+            R = refine_image(read_frame(input_r_file_path_list[i], config.norm_val, rotate), refine_val)
+            R = torch.FloatTensor(R.transpose(0, 3, 1, 2).copy()).cuda()
+
+        if gt_file_path_list is not None:
+            GT = refine_image(read_frame(gt_file_path_list[i], config.norm_val, rotate), refine_val)
+            GT = torch.FloatTensor(GT.transpose(0, 3, 1, 2).copy()).cuda()
+
+        # Run network
         time_norm = time_norm + 1
         with torch.no_grad():
             if 'dual' not in config.mode:
@@ -120,38 +130,35 @@ def eval_quan(config):
 
             output = out['result']
 
+        if config.EVAL.data == 'PixelDP':
+            output = torch.rot90(output, 1, [3, 2])
+
         output_cpu = output.cpu().numpy()[0].transpose(1, 2, 0) #[0, 1]
-        GT_cpu = GT.cpu().numpy()[0].transpose(1, 2, 0) #[0, 1]
 
-        PSNR = psnr(output_cpu, GT_cpu)
-        SSIM = ssim(output_cpu, GT_cpu)
-        MAE = mae(output_cpu, GT_cpu)
-        with torch.no_grad():
-            LPIPs = LPIPSN.forward(output * 2. - 1., GT * 2. - 1.).item() #[-1, 1]
+        ## QRun networkuantitative evaluation
+        if gt_file_path_list is not None:
+            GT_cpu = GT.cpu().numpy()[0].transpose(1, 2, 0) #[0, 1]
+            PSNR = psnr(output_cpu, GT_cpu)
+            SSIM = ssim(output_cpu, GT_cpu)
+            MAE = mae(output_cpu, GT_cpu)
+            with torch.no_grad():
+                LPIPs = LPIPSN.forward(output * 2. - 1., GT * 2. - 1.).item() #[-1, 1]
 
+        ## Qualitative evaluation
         frame_name = os.path.basename(frame_name)
         frame_name, _ = os.path.splitext(frame_name)
 
-        Path(os.path.join(save_path_deblur, 'png')).mkdir(parents=True, exist_ok=True)
-        Path(os.path.join(save_path_deblur, 'input', 'png')).mkdir(parents=True, exist_ok=True) # for CUHK
+        for iformat in ['png', 'jpg']:
+            Path(os.path.join(save_path_deblur, 'input', iformat)).mkdir(parents=True, exist_ok=True)
+            Path(os.path.join(save_path_deblur, 'output', iformat)).mkdir(parents=True, exist_ok=True)
 
-        save_file_path_deblur = os.path.join(save_path_deblur, 'png', '{:02d}.png'.format(i+1))
-        save_file_path_deblur_input = os.path.join(save_path_deblur, 'input', 'png', '{:02d}.png'.format(i+1)) # for CUHK
+            save_file_path_deblur_input = os.path.join(save_path_deblur, 'input', iformat, '{:02d}.{}'.format(i+1, iformat))
+            save_file_path_deblur = os.path.join(save_path_deblur, 'output', iformat, '{:02d}.{}'.format(i+1, iformat))
 
-        if config.EVAL.data == 'pixel':
-            output = torch.rot90(output, 1, [3, 2])
+            vutils.save_image(C, '{}'.format(save_file_path_deblur_input), nrow=1, padding = 0, normalize = False)
+            vutils.save_image(output, '{}'.format(save_file_path_deblur), nrow=1, padding = 0, normalize = False)
 
-        vutils.save_image(output, '{}'.format(save_file_path_deblur), nrow=1, padding = 0, normalize = False)
-        vutils.save_image(C, '{}'.format(save_file_path_deblur_input), nrow=1, padding = 0, normalize = False) # for cuhk
-
-        Path(os.path.join(save_path_deblur, 'jpg')).mkdir(parents=True, exist_ok=True)
-        Path(os.path.join(save_path_deblur, 'input', 'jpg')).mkdir(parents=True, exist_ok=True) # for CUHK
-        save_file_path_deblur = os.path.join(save_path_deblur, 'jpg', '{:02d}.jpg'.format(i+1))
-        save_file_path_deblur_input = os.path.join(save_path_deblur, 'input', 'jpg', '{:02d}.jpg'.format(i+1)) # for CUHK
-
-        vutils.save_image(output, '{}'.format(save_file_path_deblur), nrow=1, padding = 0, normalize = False)
-        vutils.save_image(C, '{}'.format(save_file_path_deblur_input), nrow=1, padding = 0, normalize = False) # for cuhk
-
+        # Log
         print('[EVAL {}|{}][{}/{}] {} PSNR: {:.5f}, SSIM: {:.5f}, MAE: {:.5f}, LPIPS: {:.5f} ({:.5f}sec)'.format(config.mode, config.EVAL.data, i + 1, len(input_c_file_path_list), frame_name, PSNR, SSIM, MAE, LPIPs, itr_time))
         with open(os.path.join(save_path_root_deblur_score, 'score_{}.txt'.format(config.EVAL.data)), 'w' if i == 0 else 'a') as file:
             file.write('[EVAL {}][{}/{}] {} PSNR: {:.5f}, SSIM: {:.5f}, MAE: {:.5f}, LPIPS: {:.5f} ({:.5f}sec)\n'.format(config.mode, i + 1, len(input_c_file_path_list), frame_name, PSNR, SSIM, MAE, LPIPs, itr_time))
@@ -177,5 +184,7 @@ def eval_quan(config):
         file.close()
 
 def eval(config):
-    if config.EVAL.eval_mode == 'quan':
-        eval_quan(config)
+    # if config.EVAL.eval_mode == 'quan':
+    #     eval_quan(config)
+    eval_quan_qual(config)
+

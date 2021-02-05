@@ -13,7 +13,7 @@ def get_config(project = '', mode = '', config_ = ''):
     config.is_train = False
     config.thread_num = 1
     config.dist = False
-    config.resume = None # 'resume state file name'
+    config.resume = None # 'resume epoch'
     config.manual_seed = 0
     config.is_verbose = False
 
@@ -25,7 +25,7 @@ def get_config(project = '', mode = '', config_ = ''):
     config.norm_val = (2**config.in_bit - 1)
 
     config.batch_size = 8
-    config.batch_size_test = 1 #3 for sample recurrent2
+    config.batch_size_test = 1
     config.height = 256
     config.width = 256
 
@@ -80,8 +80,8 @@ def get_config(project = '', mode = '', config_ = ''):
     config.VAL.c_path = os.path.join(config.data_offset, 'DPDD/val_c')
     config.VAL.l_path = os.path.join(config.data_offset, 'DPDD/val_l')
     config.VAL.r_path = os.path.join(config.data_offset, 'DPDD/val_r')
-    config.VAL.input_path = 'source' # os.path.join(config.VAL.data_path, 'input')
-    config.VAL.gt_path = 'target' # os.path.join(config.VAL.data_path, 'gt')
+    config.VAL.input_path = 'source'
+    config.VAL.gt_path = 'target'
 
     ##################################### EVAL ######################################
     config.EVAL = edict()
@@ -102,8 +102,8 @@ def get_config(project = '', mode = '', config_ = ''):
     config.EVAL.l_path = None
     config.EVAL.r_path = None
 
-    config.EVAL.input_path = 'source' # os.path.join(offset, 'input')
-    config.EVAL.gt_path = 'target' # os.path.join(offset, 'gt')
+    config.EVAL.input_path = None
+    config.EVAL.gt_path = None
 
     # log dir
     config.EVAL.LOG_DIR = edict()
@@ -116,14 +116,25 @@ def set_eval_path(config, data):
         config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_c')
         config.EVAL.l_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_l')
         config.EVAL.r_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_r')
+        # child paths
+        config.EVAL.input_path = 'source' 
+        config.EVAL.gt_path = 'target'
+
     elif data == 'PixelDP':
         config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_c')
         config.EVAL.l_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_l')
         config.EVAL.r_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_r')
     elif data == 'RealDOF':
-        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'RealDOF/test_c')
+        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'RealDOF')
+        # child paths
+        config.EVAL.input_path = 'source' 
+        config.EVAL.gt_path = 'target'
+        
     elif data == 'CUHK':
-        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'CUHK/test_c')
+        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'CUHK')
+
+    elif data == 'any':
+        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'any')
 
     return config
 
@@ -131,7 +142,6 @@ def log_config(path, cfg):
     with open(path + '/config.txt', 'w') as f:
         f.write(json.dumps(cfg, indent=4))
         f.close()
-
 
 def print_config(cfg):
     print(json.dumps(cfg, indent=4))
