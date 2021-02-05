@@ -33,11 +33,11 @@ All material related to our paper is available by following links:
 | :-------------- |
 | [The main paper (todo)](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
 | [Supplementary Files (todo)](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
-| [Checkpoint Files](https://www.dropbox.com/s/p9efo744tzr3wsv/checkpoints.zip?dl=0) |
-| [The DPDD dataset](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel) |
-| [The CUHK dataset](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html) |
-| [The PixelDP test set](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008) |
-| [The RealDOF test set](https://www.dropbox.com/s/3l5gt3zz1zad5zl/RealDOF.zip?dl=0) |
+| [Checkpoint Files](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0) |
+| The DPDD dataset ([download](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0)/[reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
+| The CUHK dataset ([download](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0)/[reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
+| The PixelDP test set ([download](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0)/[reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
+| [The RealDOF test set](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0) |
 
 ## Training & testing of the network
 ### Training
@@ -91,10 +91,10 @@ python run.py --mode [MODE] --data [DATASET]
     * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
 
 ## Testing with pre-trained weights of CVPR2021
-1. Download pretrained weights from [here](https://www.dropbox.com/s/p9efo744tzr3wsv/checkpoints.zip?dl=0).
+1. Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0).
 Then, unzip them under `./checkpoints`.
 
-2. (TODO) Download and Place test sets ([DPDD](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel), [RealDOF](https://www.dropbox.com/s/3l5gt3zz1zad5zl/RealDOF.zip?dl=0), [PixelDP](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008) and [CUHK](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) under `./test` (the offset can be modified in `./configs/config.py`).
+2. (TODO) Download and Place test sets ([DPDD](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0), [RealDOF](https://www.dropbox.com/s/pcduxbhgdhwexij/RealDOF.zip?dl=0), [PixelDP](https://www.dropbox.com/s/71dyss7o0wwlcdu/PixelDP.zip?dl=0) and [CUHK](https://www.dropbox.com/s/cgialzeu9t4mtit/CUHK.zip?dl=0)) under `./test` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
 
 3. To test the network, type:
 * to test the final model 
