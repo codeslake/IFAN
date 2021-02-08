@@ -289,12 +289,11 @@ if __name__ == '__main__':
                 # print(config['config'])
         else:
             config_lib = importlib.import_module('configs.{}'.format(args.config))
-
-        config = config_lib.get_config(args.project, args.mode, args.config)
+            config = config_lib.get_config(args.project, args.mode, args.config)
 
         config.is_train = False
         ## EVAL
-        parser.add_argument('-net', '--network', type = str, default = config.mode, help = 'network name')
+        parser.add_argument('-net', '--network', type = str, default = config.network, help = 'network name')
         parser.add_argument('-ckpt_name', '--ckpt_name', type=str, default = None, help='ckpt name')
         parser.add_argument('-ckpt_abs_name', '--ckpt_abs_name', type=str, default = None, help='ckpt abs name')
         parser.add_argument('-ckpt_epoch', '--ckpt_epoch', type=int, default = None, help='ckpt epoch')
