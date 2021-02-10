@@ -16,8 +16,7 @@ class Network(nn.Module):
         self.RBFs = config.RBFs
         self.RBF_num = config.RBF_num
         res_num = config.res_num
-        self.wi = config.wi
-        self.wiF = config.wiF
+        self.wiRF = config.wiRF
 
         ch4 = config.ch * 4
         self.ch4 = ch4
@@ -30,7 +29,7 @@ class Network(nn.Module):
 
     def weights_init_F(self, m):
         if isinstance(m, torch.nn.Conv2d) or isinstance(m, torch.nn.ConvTranspose2d):
-            torch.nn.init.xavier_uniform_(m.weight, gain = self.wiF)
+            torch.nn.init.xavier_uniform_(m.weight, gain = self.wiRF)
             if m.bias is not None:
                 torch.nn.init.constant_(m.bias, 0)
 
