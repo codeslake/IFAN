@@ -69,6 +69,8 @@ class Trainer():
                 if self.config.resume is None:
                     self.ckpt_manager.save(self.model.get_network(), self.model.get_training_state(0), 0, score = [1e-8, 1e8])
             is_log = epoch == 1 or epoch % self.config.write_ckpt_every_epoch == 0 or epoch > self.max_epoch - 10
+            if self.config.resume is not None and epoch == int(self.config.resume) + 1:
+                is_log = True
 
             for state in self.states:
                 epoch_time = time.time()
