@@ -149,7 +149,7 @@ class Trainer():
                             self.err_epoch[state][k] += v
                         else:
                             self.err_epoch[state][k] = v
-                self.norm = self.norm + bs 
+                self.norm = self.norm + bs
                 if self.rank <= 0:
                     ## saves image patches for logging
                     # inputs = self.model.results['inputs']
@@ -302,7 +302,7 @@ if __name__ == '__main__':
         parser.add_argument('-ckpt_sc', '--ckpt_score', action = 'store_true', help='ckpt name')
         parser.add_argument('-dist', '--dist', action = 'store_true', default = False, help = 'whether to distributed pytorch')
         parser.add_argument('-eval_mode', '--eval_mode', type=str, default = 'quan', help = 'evaluation mode. qual(qualitative)/quan(quantitative)')
-        parser.add_argument('-data', '--data', type=str, default = 'DPDD', help = 'dataset to evaluate(DP/pixel)')
+        parser.add_argument('-data', '--data', type=str, default = 'DPDD', help = 'dataset to evaluate(DPDD/PixelDP/RealDOF/any)')
         args, _ = parser.parse_known_args()
 
         config.network = args.network

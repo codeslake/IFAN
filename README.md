@@ -71,14 +71,14 @@ CUDA_VISIBLE_DEVICES=0 python -B run.py \
 ```
 * options
     * `--is_train`: If it is specified, `run.py` will train the network.  
-    * `--mode`: The name of training mode. The logging folder named with the `mode` will be created under `./logs/Defocus_Deblurring/[mode]`. 
-    * `--config`: The name of config file located as in `./config/[config].py`.
-    * `--trainer`: The name of trainer  file located as in `./models/trainers/[trainer].py`.
-    * `--network`: The name of network file located as in `./models/archs/[network].py`.
-    * `-b`: The batch size. For the multi GPU (`DistributedDataParallel`), the total batch size will be, `nproc_per_node * b`.
-    * `-th`: The number of thread (`num_workers`) used for the data loader (defined in `./models/baseModel`).
-    * `-dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). Option works only when `--is_train` is specified.
-    * `-r`: Resume training with specified epoch # (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
+    * `--mode`: The name of a training mode. The logging folder named with the `mode` will be created under `./logs/Defocus_Deblurring/[mode]`. 
+    * `--config`: The name of a config file located as in `./config/[config].py`.
+    * `--trainer`: The name of a trainer file located as in `./models/trainers/[trainer].py`.
+    * `--network`: The name of a network file located as in `./models/archs/[network].py`.
+    * `-b`: The batch size. With multi GPUs, (`DistributedDataParallel`), the total batch size will be, `nproc_per_node * b`.
+    * `-th`: The number of threads (`num_workers`) for the data loader (defined in `./models/baseModel`).
+    * `-dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). The option works only when `--is_train` is specified.
+    * `-r`: Resume training with the specified epoch # (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
     * `-dist`: whether to use `DistributedDataParallel`.
 
 ### Testing
@@ -89,7 +89,7 @@ python run.py --mode [MODE] --data [DATASET]
 * options
     * `--mode`: The name of the training mode that you want to test.
     * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP, any`, and their path can be modified by the function `set_eval_path(..)` in `./configs/config.py`.
-    * `-ckpt_name`: Load sthe checkpoint with the name of the checkpoint under `./logs/Defocus_Deblurring/[mode]/checkpoint/train/epoch/ckpt/` (e.g., `python run.py --mode IFAN --data DPDD --ckpt_name IFAN_00000.pytorch`).
+    * `-ckpt_name`: Loads the checkpoint with the name of the checkpoint under `./logs/Defocus_Deblurring/[mode]/checkpoint/train/epoch/ckpt/` (e.g., `python run.py --mode IFAN --data DPDD --ckpt_name IFAN_00000.pytorch`).
     * `-ckpt_abs_name`. Loads the checkpoint of the absolute path (e.g., `python run.py --mode IFAN --data DPDD --ckpt_abs_name ./checkpoints/IFAN.pytorch`).
     * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 0`). 
     * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
