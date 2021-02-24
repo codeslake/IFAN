@@ -80,6 +80,8 @@ CUDA_VISIBLE_DEVICES=0 python -B run.py \
     * `-dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). The option works only when `--is_train` is specified.
     * `-r`: Resume training with the specified epoch # (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
     * `-dist`: whether to use `DistributedDataParallel`.
+* logs
+    * The root offset of logs is `./logs`. It can be changed by `log_offset` in `./config/config.py`. In `./logs/Defocus_Deblurring/[mode]/`, checkpoints, resume states, config, scalar logs for tensorboard and testing results will be saved.
 
 ### Testing
 ```bash
@@ -93,6 +95,8 @@ python run.py --mode [MODE] --data [DATASET]
     * `-ckpt_abs_name`. Loads the checkpoint of the absolute path (e.g., `python run.py --mode IFAN --data DPDD --ckpt_abs_name ./checkpoints/IFAN.pytorch`).
     * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 0`). 
     * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
+* results
+    * Testing results will be saved in `./logs/Defocus_Deblurring/[mode]/result`.
 
 ## Testing with pre-trained weights of CVPR2021
 > Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0). Then, unzip them under `./checkpoints`.
