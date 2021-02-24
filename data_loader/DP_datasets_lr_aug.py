@@ -54,10 +54,10 @@ class datasets(data.Dataset):
                 gauss = np.random.normal(mean,sigma,(row,col,ch))
                 gauss = gauss.reshape(row,col,ch)
 
-                l_frame = np.expand_dims(l_frame[0] + gauss, axis = 0)
-                r_frame = np.expand_dims(r_frame[0] + gauss, axis = 0)
-                c_frame = np.expand_dims(c_frame[0] + gauss, axis = 0)
-                gt_frame = np.expand_dims(gt_frame[0] + gauss, axis = 0)
+                l_frame = np.expand_dims(np.clip(l_frame[0] + gauss, 0.0, 1.0), axis = 0)
+                r_frame = np.expand_dims(np.clip(r_frame[0] + gauss, 0.0, 1.0), axis = 0)
+                c_frame = np.expand_dims(np.clip(c_frame[0] + gauss, 0.0, 1.0), axis = 0)
+                gt_frame = np.expand_dims(np.clip(gt_frame[0] + gauss, 0.0, 1.0) axis = 0)
 
             # Grayscale
             if random.uniform(0, 1) <= 0.3:
