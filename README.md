@@ -2,8 +2,7 @@
 
 # Iterative Filter Adaptive Network for Single Image Defocus Deblurring
 ![Python 3.8.5](https://img.shields.io/badge/python-3.8.5-green.svg?style=plastic)
-originally with, ![PyTorch 1.6.0](https://img.shields.io/badge/PyTorch-1.6.0-green.svg?style=plastic)
-works fine with, ![PyTorch 1.7.1](https://img.shields.io/badge/PyTorch-1.6.0-green.svg?style=plastic)
+![PyTorch 1.6.0](https://img.shields.io/badge/PyTorch-originally with 1.6.0, work fine with 1.7.1-green.svg?style=plastic)
 ![CUDA 10.1.105](https://img.shields.io/badge/CUDA-10.1.105-green.svg?style=plastic)
 ![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-blue.svg?style=plastic)
 
