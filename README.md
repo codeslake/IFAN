@@ -81,7 +81,8 @@ CUDA_VISIBLE_DEVICES=0 python -B run.py \
     * `-r`: Resume training with the specified epoch # (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
     * `-dist`: whether to use `DistributedDataParallel`.
 * logs
-    * The root offset of logs is `./logs`. It can be changed by `log_offset` in `./config/config.py`. In `./logs/Defocus_Deblurring/[mode]/`, checkpoints, resume states, config, scalar logs for tensorboard and testing results will be saved.
+    * The root offset of logs is `./logs`. It can be changed by `config.log_offset` in `./config/config.py`. In `./logs/Defocus_Deblurring/[mode]/`, checkpoints, resume states, config, scalar logs for tensorboard and testing results will be saved.
+    * Currently, the logs will be saved for every 4 epochs, which can be reset by `config.write_ckpt_every_epoch` in `./config/config.py`.
 
 ### Testing
 ```bash

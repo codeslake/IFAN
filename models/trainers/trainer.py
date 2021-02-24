@@ -52,6 +52,7 @@ class Model(baseModel):
         ### INIT for training ###
         if self.is_train:
             self.itr_global = {'train': 0, 'valid': 0}
+            self.itr_inc = {'train': 1, 'valid': 1} # iteration increase factor (for video processing, it might be higher than 1)
             self.network.init()
             self._set_optim()
             self._set_lr_scheduler()
@@ -83,15 +84,11 @@ class Model(baseModel):
                     f.write('{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2))
                     f.close()
 
-
-    def get_itr_per_epoch(self):
-        return len(self.data_loader_train)
-
-    def get_train_len(self):
-        return len(self.dataset_train)
-
-    def get_test_len(self):
-        return len(self.dataset_eval)
+    def get_itr_per_epoch(self, state):
+        if state == 'train':
+            return len(self.data_loader_train) * self.itr_inc[state]
+        else:
+            return len(self.data_loader_eval) * self.itr_inc[state]
 
     def _set_loss(self, lr = None):
         if self.rank <= 0: print(toGreen('Building Loss...'))
@@ -157,26 +154,28 @@ class Model(baseModel):
         return lr
 
     ########################### Edit from here for training/testing scheme ###############################
-    def _set_results(self, inputs, outs, errs, lr, is_train):
-        # save scalars
+    def _set_results(self, inputs, outs, errs, norm, lr, is_train):
+
+        # save visuals (inputs)
+        if self.config.save_sample:
+            self.results['inputs'] = collections.OrderedDict()
+            self.results['inputs']['R'] = refine_image_pt(inputs['r'], 8)
+            self.results['inputs']['L'] = refine_image_pt(inputs['l'], 8)
+            self.results['inputs']['GT'] = refine_image_pt(inputs['gt'], 8)
+            self.results['inputs']['R_down'] = F.interpolate(refine_image_pt(inputs['r'], 8), scale_factor=1/8, mode='area')
+            self.results['inputs']['L_down'] = F.interpolate(refine_image_pt(inputs['l'], 8), scale_factor=1/8, mode='area')
+            self.results['inputs']['GT_down'] = F.interpolate(refine_image_pt(inputs['gt'], 8), scale_factor=1/8, mode='area')
+
+            # save visuals (outputs)
+            self.results['outs'] = {'result': outs['result']}
+            if 'D' in self.config.mode or 'IFAN' in self.config.mode:
+                self.results['outs']['f_R_w'] = outs['f_R_w']
+            if 'R' in self.config.mode or 'IFAN' in self.config.mode:
+                self.results['outs']['SB'] = outs['SB']
+
+        ## essential ##
         self.results['errs'] = errs
-
-        # # save visuals (inputs)
-        # self.results['inputs'] = collections.OrderedDict()
-        # self.results['inputs']['R'] = refine_image_pt(inputs['r'], 8)
-        # self.results['inputs']['L'] = refine_image_pt(inputs['l'], 8)
-        # self.results['inputs']['GT'] = refine_image_pt(inputs['gt'], 8)
-        # self.results['inputs']['R_down'] = F.interpolate(refine_image_pt(inputs['r'], 8), scale_factor=1/8, mode='area')
-        # self.results['inputs']['L_down'] = F.interpolate(refine_image_pt(inputs['l'], 8), scale_factor=1/8, mode='area')
-        # self.results['inputs']['GT_down'] = F.interpolate(refine_image_pt(inputs['gt'], 8), scale_factor=1/8, mode='area')
-
-        # # save visuals (outputs)
-        # self.results['outs'] = {'result': outs['result']}
-        # if 'D' in self.config.mode or 'IFAN' in self.config.mode:
-        #     self.results['outs']['f_R_w'] = outs['f_R_w']
-        # if 'R' in self.config.mode or 'IFAN' in self.config.mode:
-        #     self.results['outs']['SB'] = outs['SB']
-
+        self.results['norm'] = norm
         self.results['lr'] = lr
 
     def _get_results(self, C, R, L, GT, is_train):
@@ -225,9 +224,7 @@ class Model(baseModel):
     def iteration(self, inputs, epoch, max_epoch, is_train):
         # init for logging
         state = 'train' if is_train else 'valid'
-        self.itr_global[state] += 1
-        #if self.rank <= 0:
-            #print(self.itr_global[state])
+        self.itr_global[state] += self.itr_inc[state]
 
         # dataloader / loading data
         inputs['c'] = inputs['c'].to(torch.device('cuda'))
@@ -246,7 +243,8 @@ class Model(baseModel):
         lr = self._update(errs, self.config.warmup_itr) if is_train else None
 
         # set results for the log
-        self._set_results(inputs, outs, errs, lr, is_train)
+        norm, _, _, _ = outs['result'].shape
+        self._set_results(inputs, outs, errs, norm, lr, is_train)
 
 class DeblurNet(nn.Module):
     def __init__(self, config, lib):

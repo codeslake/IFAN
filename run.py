@@ -44,9 +44,8 @@ class Trainer():
         ## training vars
         self.states = ['train', 'valid']
         # self.states = ['valid', 'train']
-        self.max_epoch = int(math.ceil(config.total_itr / self.model.get_itr_per_epoch()))
+        self.max_epoch = int(math.ceil(config.total_itr / self.model.get_itr_per_epoch('train')))
         self.epoch_range = np.arange(1, self.max_epoch + 1)
-        self.itr = 0
         self.err_epoch = {'train': {}, 'valid': {}}
         self.norm = torch.tensor(0).to(torch.device('cuda'))
         self.lr = 0
@@ -74,7 +73,6 @@ class Trainer():
 
             for state in self.states:
                 epoch_time = time.time()
-                self.itr = 0
                 if state == 'train':
                     self.model.train()
                     self.iteration(epoch, state, is_log)
@@ -92,10 +90,17 @@ class Trainer():
 
                             if self.rank <= 0:
                                 self.summary.add_scalar('loss/epoch_{}_{}'.format(state, k), self.err_epoch[state][k], epoch)
+                                self.summary.add_scalar('loss/itr_{}_{}'.format(state, k), self.err_epoch[state][k], self.model.itr_global['train'])
 
                         if self.rank <= 0:
                             torch.cuda.synchronize()
-                            print_logs(state.upper() + ' TOTAL', self.config.mode, epoch, self.max_epoch, epoch_time, errs = self.err_epoch[state], lr = self.lr)
+                            if state == 'train':
+                                # print_logs(state.upper() + ' TOTAL', self.config.mode, epoch, self.max_epoch, epoch_time, errs = self.err_epoch[state], lr = self.lr)
+                                print_logs(state.upper() + ' TOTAL', self.config.mode, epoch, self.max_epoch, epoch_time, iter = self.model.itr_global[state], iter_total = self.config.total_itr, errs = self.err_epoch[state], lr = self.lr, is_overwrite = False)
+                            else:
+                                print_logs(state.upper() + ' TOTAL', self.config.mode, epoch, self.max_epoch, epoch_time, errs = self.err_epoch[state], lr = self.lr, is_overwrite = False)
+                                print('\n')
+
                             if state == 'valid':
                                 is_saved = False
                                 while is_saved == False:
@@ -129,54 +134,58 @@ class Trainer():
             if is_train: self.model.sampler_train.set_epoch(epoch)
 
 
+        itr = 0
         self.norm = torch.tensor(0).to(torch.device('cuda'))
         for inputs in data_loader:
             lr = None
             itr_time = time.time()
 
             self.model.iteration(inputs, epoch, self.max_epoch, is_train)
-            self.itr += 1
+            itr += 1
 
             if is_log:
+                ## To sum up all errs[key] across the GPU, and to average it by norm
                 bs = inputs['gt'].size()[0]
                 errs = self.model.results['errs']
                 for k, v in errs.items():
-                    v = bs * v
-                    if self.itr == 1:
+                    if itr == 1:
                         self.err_epoch[state][k] = v
                     else:
                         if k in self.err_epoch[state].keys():
                             self.err_epoch[state][k] += v
                         else:
                             self.err_epoch[state][k] = v
-                self.norm = self.norm + bs
+                self.norm = self.norm + self.model.results['norm']
+                ##
+
                 if self.rank <= 0:
-                    ## saves image patches for logging
-                    # inputs = self.model.results['inputs']
-                    # outs = self.model.results['outs']
-                    # sample_dir = self.config.LOG_DIR.sample if is_train else self.config.LOG_DIR.sample_val
-                    # if self.itr == 1 or self.model.itr_global[state] % config.write_log_every_itr[state] == 0:
-                        # try:
-                        #     # for key, val in errs.items():
-                        #     #     self.summary.add_scalar('loss/{}_{}'.format(key, state), val, self.model.itr_global[state])
+                    if config.save_sample:
+                        # saves image patches for logging
+                        inputs = self.model.results['inputs']
+                        outs = self.model.results['outs']
+                        sample_dir = self.config.LOG_DIR.sample if is_train else self.config.LOG_DIR.sample_val
+                        if itr == 1 or self.model.itr_global[state] % config.write_log_every_itr[state] == 0:
+                            try:
+                                for key, val in errs.items():
+                                    self.summary.add_scalar('loss/{}_{}'.format(key, state), val, self.model.itr_global[state])
 
-                        #     # vutils.save_image(inputs['input'], '{}/{}_{}_1_input.jpg'.format(sample_dir, epoch, self.itr), nrow=3, padding = 0, normalize = False)
-                        #     # # vutils.save_image((inputs['input'].cpu().numpy() * self.config.norm_val).astype(np.uint16), '{}/{}_{}_1_input.jpg'.format(sample_dir, epoch, self.itr), nrow=3, padding = 0, normalize = False)
-                        #     # i = 2
-                        #     # for key, val in outs.items():
-                        #     #     if val.dim() == 5:
-                        #     #         for j in range(val.size()[1]):
-                        #     #             vutils.save_image(val[:, j, :, :, :], '{}/{}_{}_{}_out_{}_{}.jpg'.format(sample_dir, epoch, self.itr, i, key, j), nrow=3, padding = 0, normalize = False)
-                        #     #     else:
-                        #     #         vutils.save_image(val, '{}/{}_{}_{}_out_{}.jpg'.format(sample_dir, epoch, self.itr, i, key), nrow=3, padding = 0, normalize = False)
-                        #     #     i += 1
+                                vutils.save_image(inputs['input'], '{}/{}_{}_1_input.jpg'.format(sample_dir, epoch, itr), nrow=3, padding = 0, normalize = False)
+                                i = 2
+                                for key, val in outs.items():
+                                    if val.dim() == 5:
+                                        for j in range(val.size()[1]):
+                                            vutils.save_image(val[:, j, :, :, :], '{}/{}_{}_{}_out_{}_{}.jpg'.format(sample_dir, epoch, itr, i, key, j), nrow=3, padding = 0, normalize = False)
+                                    else:
+                                        vutils.save_image(val, '{}/{}_{}_{}_out_{}.jpg'.format(sample_dir, epoch, itr, i, key), nrow=3, padding = 0, normalize = False)
+                                    i += 1
 
-                        #     # vutils.save_image(inputs['gt'], '{}/{}_{}_{}_gt.jpg'.format(sample_dir, epoch, self.itr, i), nrow=3, padding = 0, normalize = False)
-                        # except Exception as ex:
-                        #     if self.rank <= 0 :  print('saving error: ', ex)
+                                vutils.save_image(inputs['gt'], '{}/{}_{}_{}_gt.jpg'.format(sample_dir, epoch, itr, i), nrow=3, padding = 0, normalize = False)
+                            except Exception as ex:
+                                if self.rank <= 0 :  print('saving error: ', ex)
 
                     self.lr = self.model.results['lr']
-                    print_logs(state.upper(), self.config.mode, epoch, self.max_epoch, itr_time, self.itr, len(data_loader), errs = errs, lr = self.lr)
+                    torch.cuda.synchronize()
+                    print_logs(state.upper(), self.config.mode, epoch, self.max_epoch, itr_time, itr * self.model.itr_inc[state], self.model.get_itr_per_epoch(state), errs = errs, lr = self.lr, is_overwrite = itr > 1)
 
 ##########################################################
 def init_dist(backend='nccl', **kwargs):
@@ -217,6 +226,7 @@ if __name__ == '__main__':
         parser.add_argument('-th', '--thread_num', type = int, default = config.thread_num, help = 'number of thread')
         parser.add_argument('-dist', '--dist', action = 'store_true', default = config.dist, help = 'whether to distributed pytorch')
         parser.add_argument('-vs', '--is_verbose', action = 'store_true', default = False, help = 'whether to delete log')
+        parser.add_argument('-ss', '--save_sample', action = 'store_true', default = False, help = 'whether to save_sample')
         parser.add_argument("--local_rank", type=int)
 
         ## CUSTOM
@@ -237,6 +247,7 @@ if __name__ == '__main__':
         config.thread_num = args.thread_num
         config.dist = args.dist
         config.is_verbose = args.is_verbose
+        config.save_sample = args.save_sample
 
         # CUSTOM
         config.wi = args.weights_init
@@ -275,6 +286,8 @@ if __name__ == '__main__':
         torch.cuda.manual_seed_all(seed)
 
         trainer = Trainer(config, rank)
+        if config.dist:
+            dist.barrier()
         trainer.train()
 
     else:

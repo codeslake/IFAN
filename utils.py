@@ -49,10 +49,10 @@ def toGrey(content):
 def toWhite(content):
     return termcolor.colored(content,"white",attrs=["bold"])
 
-def print_logs(train_mode, mode, epoch, max_epoch, time_s, iter = '', iter_total = '', errs = '', coefs = '', lr = None):
+def print_logs(train_mode, mode, epoch, max_epoch, time_s, iter = '', iter_total = '', errs = '', coefs = '', lr = None, is_overwrite=True):
     CURSOR_UP_ONE = '\x1b[1A' 
     ERASE_LINE = '\x1b[2K'
-    is_overwrite = True
+    # is_overwrite = True
 
     err_str = ''
     if errs != '':
@@ -69,8 +69,8 @@ def print_logs(train_mode, mode, epoch, max_epoch, time_s, iter = '', iter_total
 
     iter_str = ''
     if iter != '':
-        if iter == 1:
-            is_overwrite = False
+        # if iter == 1:
+        #     is_overwrite = False
         iter_str = ' ({}/{})'.format(toCyan('{:04}'.format(iter)), toCyan('{:04}'.format(iter_total)))
 
     lr_str = ''

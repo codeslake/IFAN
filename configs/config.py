@@ -61,10 +61,10 @@ def get_config(project = '', mode = '', config_ = ''):
 
     # log dirs
     config.LOG_DIR = edict()
-    offset = './logs'
-    offset = os.path.join(offset, config.project)
-    offset = os.path.join(offset, '{}'.format(mode))
-    config.LOG_DIR.offset = offset
+    log_offset = './logs'
+    log_offset = os.path.join(log_offset, config.project)
+    log_offset = os.path.join(log_offset, '{}'.format(mode))
+    config.LOG_DIR.offset = log_offset
     config.LOG_DIR.ckpt = os.path.join(config.LOG_DIR.offset, 'checkpoint', 'train', 'epoch')
     config.LOG_DIR.ckpt_ckpt = os.path.join(config.LOG_DIR.offset, 'checkpoint', 'train', 'epoch', 'ckpt')
     config.LOG_DIR.ckpt_state = os.path.join(config.LOG_DIR.offset, 'checkpoint', 'train', 'epoch', 'state')
