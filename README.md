@@ -2,7 +2,8 @@
 
 # Iterative Filter Adaptive Network for Single Image Defocus Deblurring
 ![Python 3.8.5](https://img.shields.io/badge/python-3.8.5-green.svg?style=plastic)
-![PyTorch 1.6.0](https://img.shields.io/badge/PyTorch-1.6.0-green.svg?style=plastic)
+originally with, ![PyTorch 1.6.0](https://img.shields.io/badge/PyTorch-1.6.0-green.svg?style=plastic)
+works fine with, ![PyTorch 1.7.1](https://img.shields.io/badge/PyTorch-1.6.0-green.svg?style=plastic)
 ![CUDA 10.1.105](https://img.shields.io/badge/CUDA-10.1.105-green.svg?style=plastic)
 ![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-blue.svg?style=plastic)
 
@@ -97,7 +98,7 @@ python run.py --mode [MODE] --data [DATASET]
     * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 0`). 
     * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
 * results
-    * Testing results will be saved in `./logs/Defocus_Deblurring/[mode]/result`.
+    * Testing results will be saved in `./logs/Defocus_Deblurring/[mode]/result/quanti_quali/[mode]_[epoch]/data`.
 
 ## Testing with pre-trained weights of CVPR2021
 > Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0). Then, unzip them under `./checkpoints`.
