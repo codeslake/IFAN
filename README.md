@@ -10,7 +10,7 @@
 
 This repository contains the official PyTorch implementation of the following paper:
 
-> **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring (todo)](http://cg.postech.ac.kr/papers/2020_CGI_JY.pdf)**<br>
+> **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring](http://cg.postech.ac.kr/papers/2020_CGI_JY.pdf)**<br>
 > Junyong Lee, Hyeongseok Son, Jaesung Rim, Sunghyun Cho, Seungyong Lee, CVPR2021
 
 If you find this code useful, please consider citing:
@@ -32,13 +32,14 @@ All material related to our paper is available by following links:
 
 | Link |
 | :-------------- |
-| [The main paper (todo)](https://drive.google.com/file/d/1mRVo3JefkgRd2VdJvG5M-8xWtvl60ZWg/view?usp=sharing) |
-| [Supplementary Files (todo)](https://drive.google.com/file/d/1sQTGHEcko2HxoIvneyrot3bUabPrN5l1/view?usp=sharing) |
+| [The main paper]() |
+| [Supplementary]() |
 | [Checkpoint Files](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0) |
 | The DPDD dataset ([download](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0)/[reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
 | The PixelDP test set ([download](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0)/[reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
 | The CUHK dataset ([download](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0)/[reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
 | [The RealDOF test set](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0) |
+*The main paper and supplementary are provisional accepted versions. They will be updated when camera ready versions are ready*
 
 ## Training & testing of the network
 *Requirements*: `pip install -r requirements.txt`

@@ -191,7 +191,7 @@ class Model(baseModel):
             if 'result' in outs.keys():
                 errs['total'] = 0.
                 # deblur loss
-                errs['image'] = self.MSE(outs['result'], GT) + self.MAE(outs['result'], GT)
+                errs['image'] = self.MSE(outs['result'], GT)
                 errs['total'] = errs['total'] + errs['image']
 
             if is_train:
@@ -204,12 +204,12 @@ class Model(baseModel):
                     errs['total'] = errs['total'] + errs['LPIPS_MSE']
 
                 if ('D' in self.config.mode or 'IFAN' in self.config.mode) and 'f_R_w' in outs.keys():
-                    errs['feat'] = self.MSE(outs['f_R_w'], outs['f_L']) + self.MAE(outs['f_R_w'], outs['f_L'])
+                    errs['feat'] = self.MSE(outs['f_R_w'], outs['f_L'])
                     errs['total'] = errs['total'] + errs['feat']
 
                 if 'R' in self.config.mode or 'IFAN' in self.config.mode:
                     C_down = F.interpolate(C, scale_factor=1/8, mode='area')
-                    errs['reblur'] = self.MSE(outs['SB'], C_down) + self.MAE(outs['SB'], C_down)
+                    errs['reblur'] = self.MSE(outs['SB'], C_down)
                     errs['total'] = errs['total'] + errs['reblur']
 
             else:
