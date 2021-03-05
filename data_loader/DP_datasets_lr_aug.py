@@ -49,8 +49,7 @@ class datasets(data.Dataset):
             # if random.uniform(0, 1) >= 0.0:
                 row,col,ch = l_frame[0].shape
                 mean = 0
-                var = random.uniform(0.001, self.max_sig**2)
-                sigma = self.max_sig
+                sigma = random.uniform(0.001, self.max_sig)
                 gauss = np.random.normal(mean,sigma,(row,col,ch))
                 gauss = gauss.reshape(row,col,ch)
 
