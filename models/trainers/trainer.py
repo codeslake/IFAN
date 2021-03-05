@@ -26,9 +26,6 @@ import importlib
 from shutil import copy2
 import os
 
-def norm(inp):
-    return (inp + 1.) / 2.
-
 class Model(baseModel):
     def __init__(self, config):
         super(Model, self).__init__(config)
@@ -64,7 +61,6 @@ class Model(baseModel):
 
         ### PROFILE ###
         if self.rank <= 0:
-            print(toGreen('Computing model complexity...'))
             with torch.no_grad():
                 Macs,params = get_model_complexity_info(self.network.Network, (1, 3, 720, 1280), input_constructor = self.network.input_constructor, as_strings=False,print_per_layer_stat=config.is_verbose)
 
@@ -76,8 +72,9 @@ class Model(baseModel):
             self.network = DP(self.network).to(torch.device('cuda'))
 
         if self.rank <= 0:
-            print('{:<30}  {:<8} B'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 ))
-            print('{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2))
+            print(toGreen('Computing model complexity...'))
+            print(toRed('\t{:<30}  {:<8} B'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 )))
+            print(toRed('\t{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2, '\n')))
             if self.is_train:
                 with open(config.LOG_DIR.offset + '/cost.txt', 'w') as f:
                     f.write('{:<30}  {:<8} B\n'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 ))
@@ -158,20 +155,24 @@ class Model(baseModel):
 
         # save visuals (inputs)
         if self.config.save_sample:
-            self.results['inputs'] = collections.OrderedDict()
-            self.results['inputs']['R'] = refine_image_pt(inputs['r'], 8)
-            self.results['inputs']['L'] = refine_image_pt(inputs['l'], 8)
-            self.results['inputs']['GT'] = refine_image_pt(inputs['gt'], 8)
-            self.results['inputs']['R_down'] = F.interpolate(refine_image_pt(inputs['r'], 8), scale_factor=1/8, mode='area')
-            self.results['inputs']['L_down'] = F.interpolate(refine_image_pt(inputs['l'], 8), scale_factor=1/8, mode='area')
-            self.results['inputs']['GT_down'] = F.interpolate(refine_image_pt(inputs['gt'], 8), scale_factor=1/8, mode='area')
+            self.results['vis'] = collections.OrderedDict()
+            if 'dual' not in self.config.mode:
+                self.results['vis']['C'] = inputs['c']
+            else:
+                self.results['vis']['L'] = inputs['l']
+                self.results['vis']['R'] = inputs['r']
 
-            # save visuals (outputs)
-            self.results['outs'] = {'result': outs['result']}
+            self.results['vis']['result'] = outs['result']
+            self.results['vis']['GT'] = inputs['gt']
+
             if 'D' in self.config.mode or 'IFAN' in self.config.mode:
-                self.results['outs']['f_R_w'] = outs['f_R_w']
+                self.results['vis']['f_R'] = F.interpolate(inputs['r'], scale_factor=1/8, mode='area')
+                self.results['vis']['f_R_w'] = outs['f_R_w']
+                self.results['vis']['f_R_gt'] = F.interpolate(inputs['l'], scale_factor=1/8, mode='area')
             if 'R' in self.config.mode or 'IFAN' in self.config.mode:
-                self.results['outs']['SB'] = outs['SB']
+                self.results['vis']['S'] = F.interpolate(inputs['gt'], scale_factor=1/8, mode='area')
+                self.results['vis']['SB'] = outs['SB']
+                self.results['vis']['B'] = F.interpolate(inputs['c'], scale_factor=1/8, mode='area')
 
         ## essential ##
         self.results['errs'] = errs
@@ -179,9 +180,9 @@ class Model(baseModel):
         self.results['lr'] = lr
 
     def _get_results(self, C, R, L, GT, is_train):
-        if 'dual' not in  self.config.mode and 'Dual' not in self.config.mode:
-            L = L if is_train else None
-            R = R if is_train else None
+        if 'dual' not in  self.config.mode:
+            L = L if is_train or self.config.save_sample else None
+            R = R if is_train or self.config.save_sample else None
 
         outs = self.network(C, R, L, GT, is_train=is_train)
 
@@ -204,8 +205,8 @@ class Model(baseModel):
                     errs['total'] = errs['total'] + errs['LPIPS_MSE']
 
                 if ('D' in self.config.mode or 'IFAN' in self.config.mode) and 'f_R_w' in outs.keys():
-                    errs['feat'] = self.MSE(outs['f_R_w'], outs['f_L'])
-                    errs['total'] = errs['total'] + errs['feat']
+                    errs['dme'] = self.MSE(outs['f_R_w'], outs['f_L'])
+                    errs['total'] = errs['total'] + errs['dme']
 
                 if 'R' in self.config.mode or 'IFAN' in self.config.mode:
                     C_down = F.interpolate(C, scale_factor=1/8, mode='area')
@@ -226,17 +227,16 @@ class Model(baseModel):
         state = 'train' if is_train else 'valid'
         self.itr_global[state] += self.itr_inc[state]
 
-        # dataloader / loading data
-        inputs['c'] = inputs['c'].to(torch.device('cuda'))
-        inputs['r'] = inputs['r'].to(torch.device('cuda'))
-        inputs['l'] = inputs['l'].to(torch.device('cuda'))
-        inputs['gt'] = inputs['gt'].to(torch.device('cuda'))
+        # dataloader / loading data / mod crop
+        inputs['c'] = refine_image_pt(inputs['c'].to(torch.device('cuda')), self.config.refine_val)
+        inputs['r'] = refine_image_pt(inputs['r'].to(torch.device('cuda')), self.config.refine_val)
+        inputs['l'] = refine_image_pt(inputs['l'].to(torch.device('cuda')), self.config.refine_val)
+        inputs['gt'] = refine_image_pt(inputs['gt'].to(torch.device('cuda')), self.config.refine_val)
 
-        # init inputs
-        C = refine_image_pt(inputs['c'], 8)
-        R = refine_image_pt(inputs['r'], 8)
-        L = refine_image_pt(inputs['l'], 8)
-        GT = refine_image_pt(inputs['gt'], 8)
+        C = inputs['c']
+        R = inputs['r']
+        L = inputs['l']
+        GT = inputs['gt']
 
         # run network / get results and losses / update network, get learning rate
         errs, outs = self._get_results(C, R, L, GT, is_train)
@@ -288,9 +288,9 @@ class DeblurNet(nn.Module):
 
     #####################################################
     def forward(self, C, R=None, L=None, GT=None, is_train = False):
-        outs = self.Network(C, R, L, is_train)
+        outs = self.Network(C, R, L, is_train or self.config.save_sample)
 
-        if is_train and ('R' in self.config.mode or 'IFAN' in self.config.mode):
+        if (is_train or self.config.save_sample) and ('R' in self.config.mode or 'IFAN' in self.config.mode):
             outs_reblur = self.reblurNet(GT, outs['Filter'])
             outs.update(outs_reblur)
 

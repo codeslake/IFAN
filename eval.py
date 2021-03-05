@@ -45,8 +45,8 @@ def init(config, mode = 'deblur'):
     network = model.get_network().eval()
 
     ckpt_manager = CKPT_Manager(config.LOG_DIR.ckpt, config.mode, config.max_ckpt_num)
-    state, ckpt_name = ckpt_manager.load_ckpt(network, by_score = config.EVAL.load_ckpt_by_score, name = config.EVAL.ckpt_name, abs_name = config.EVAL.ckpt_abs_name, epoch = config.EVAL.ckpt_epoch)
-    print('EVAL', state, ckpt_name)
+    load_state, ckpt_name = ckpt_manager.load_ckpt(network, by_score = config.EVAL.load_ckpt_by_score, name = config.EVAL.ckpt_name, abs_name = config.EVAL.ckpt_abs_name, epoch = config.EVAL.ckpt_epoch)
+    print('\nLoading checkpoint \'{}\' on model \'{}\': {}'.format(ckpt_name, config.mode, load_state))
 
     save_path_root = config.EVAL.LOG_DIR.save
 
@@ -92,8 +92,10 @@ def eval_quan_qual(config):
     LPIPS_mean = 0.
     LPIPSN = LPIPS.PerceptualLoss(model='net-lin',net='alex').to(torch.device('cuda'))
     ##
+
+    print(toYellow('\n\n=========== EVALUATION START ============'))
     for i, frame_name in enumerate(input_c_file_path_list):
-        refine_val = 16
+        refine_val = config.refine_val
 
         if config.EVAL.data == 'PixelDP':
             rotate = cv2.ROTATE_90_COUNTERCLOCKWISE
@@ -159,9 +161,9 @@ def eval_quan_qual(config):
             vutils.save_image(output, '{}'.format(save_file_path_deblur), nrow=1, padding = 0, normalize = False)
 
         # Log
-        print('[EVAL {}|{}][{}/{}] {} PSNR: {:.5f}, SSIM: {:.5f}, MAE: {:.5f}, LPIPS: {:.5f} ({:.5f}sec)'.format(config.mode, config.EVAL.data, i + 1, len(input_c_file_path_list), frame_name, PSNR, SSIM, MAE, LPIPs, itr_time))
+        print('[EVAL {} on {}][{:02}/{}] {} PSNR: {:.5f}, SSIM: {:.5f}, MAE: {:.5f}, LPIPS: {:.5f} ({:.5f}sec)'.format(config.mode, config.EVAL.data, i + 1, len(input_c_file_path_list), frame_name, PSNR, SSIM, MAE, LPIPs, itr_time))
         with open(os.path.join(save_path_root_deblur_score, 'score_{}.txt'.format(config.EVAL.data)), 'w' if i == 0 else 'a') as file:
-            file.write('[EVAL {}][{}/{}] {} PSNR: {:.5f}, SSIM: {:.5f}, MAE: {:.5f}, LPIPS: {:.5f} ({:.5f}sec)\n'.format(config.mode, i + 1, len(input_c_file_path_list), frame_name, PSNR, SSIM, MAE, LPIPs, itr_time))
+            file.write('[EVAL {}][{:02}/{}] {} PSNR: {:.5f}, SSIM: {:.5f}, MAE: {:.5f}, LPIPS: {:.5f} ({:.5f}sec)\n'.format(config.mode, i + 1, len(input_c_file_path_list), frame_name, PSNR, SSIM, MAE, LPIPs, itr_time))
             file.close()
 
         PSNR_mean += PSNR

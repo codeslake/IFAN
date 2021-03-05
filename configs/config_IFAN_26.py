@@ -16,6 +16,7 @@ def get_config(project = '', mode = '', config = ''):
 
     config.Fs = 3 # filter size
     config.N = 26
+    config.refine_val = 8
 
     # weight init
     config.wi = 1.0

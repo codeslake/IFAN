@@ -1,33 +1,249 @@
-
-
-# Iterative Filter Adaptive Network for Single Image Defocus Deblurring
-![Python 3.8.5](https://img.shields.io/badge/python-3.8.5-green.svg?style=plastic)
-![PyTorch 1.6.0](https://img.shields.io/badge/PyTorch-originally%20with%201.6.0,%20works%20fine%20with%201.7.1-green.svg?style=plastic)
-![CUDA 10.1.105](https://img.shields.io/badge/CUDA-10.1.105-green.svg?style=plastic)
+# IFAN: Iterative Filter Adaptive Network for Single Image Defocus Deblurring
 ![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-blue.svg?style=plastic)
 
-![Teaser image](./assets/figure.jpg)
+<p align="center">
+  <img width=95% src="./assets/IFAN_network.jpg" />
+</p>
 
 This repository contains the official PyTorch implementation of the following paper:
 
 > **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring](http://cg.postech.ac.kr/papers/2020_CGI_JY.pdf)**<br>
 > Junyong Lee, Hyeongseok Son, Jaesung Rim, Sunghyun Cho, Seungyong Lee, CVPR2021
 
+## About the Research
+<details>
+    <summary><i>Click here</i></summary>
+        <h3> Iterative Adaptive Convolution Layer </h3>
+        <p> The IAC layer iteratively computes feature maps <img src="https://latex.codecogs.com/svg.latex?\hat{e}^n" /> as follows (refer Eq. 1 in the main paper): </p>
+        <p align="center">
+            <img src="./assets/IAC_eq.svg" />
+        </p>
+        <p align="center">
+            <img width=80% src="./assets/IAC.jpg" />
+        </p>
+        <p>
+            The proposed IAC layer is inspired by Xu <i>et al.</i>’s <a href="https://jiaya.me/papers/inversekernel_eccv14.pdf">separable inverse filter approach</a> and Zhou <i>et al.</i>’s <a href="http://openaccess.thecvf.com/content_ICCV_2019/papers/Zhou_Spatio-Temporal_Filter_Adaptive_Network_for_Video_Deblurring_ICCV_2019_paper.pdf">FAC layer</a>.
+            The IAC layer approximates deblurring filters using a set of separable filters in the feature domain.
+            As convolution operations before and after an IAC layer in the feature domain naturally support linear combinations of different channels, the IAC layer can successfully approximate deblurring filters.
+        </p>
+        <h3> Disparity Map Estimation & Reblurring </h3>
+        <p> To further improve the single image deblurring quality, we train our network with novel defocus-specific tasks: defocus disparity estimation and reblurring. </p>
+        <p align="center">
+            <img width=50% src="./assets/DME.jpg" />
+        </p>
+        <p>
+            <b>Disparity Map Estimation</b> exploits dual-pixel data, which provides stereo images with a tiny baseline, whose disparities are proportional to defocus blur magnitudes.
+            Leveraging dual-pixel stereo images, we train IFAN to predict the disparity map from a single image so that it can also learn to more accurately predict blur magnitudes.
+        </p>
+        <p align="center">
+            <img width=50% src="./assets/RBN.jpg" />
+        </p>
+        <p>
+            <b>Reblurring</b>, motivated by <a href="https://arxiv.org/pdf/1801.05117v1.pdf">the reblur-to-deblur scheme</a>, utilizes deblurring filters predicted by IFAN for reblurring all-in-focus images.
+            For accurate reblurring, IFAN needs to predict deblurring filters that contain accurate information about the shapes and sizes of defocus blur.
+            Based on this, during training, we introduce an additional network that inverts predicted deblurring filters to reblurring filters, and reblurs an all-in-focus image.
+        </p>
+</details>
+
+## Getting Started
+### Prerequisites
+
+*Tested environment*
+
+![Ubuntu](https://img.shields.io/badge/Ubuntu-16.0.4%20&%2018.0.4-blue.svg?style=plastic)
+![Python](https://img.shields.io/badge/Python-3.8.8-green.svg?style=plastic)
+![PyTorch](https://img.shields.io/badge/PyTorch-1.7.1%20&%201.8.0-green.svg?style=plastic)
+![CUDA](https://img.shields.io/badge/CUDA-10.2%20&%2011.1-green.svg?style=plastic)
+
+1. **Install requirements**
+    * `pip install -r requirements.txt`
+
+2. **Datasets**
+    * Download and unzip test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `[DATASET_ROOT]`:
+
+        ```
+        ├── [DATASET_ROOT]
+        │   ├── DPDD
+        │   ├── PixelDP
+        │   ├── CUHK
+        │   ├── RealDOF
+        ```
+
+        > **Note:**
+        >
+        >`[DATASET_ROOT]` is currently set to `./datasets/defocus_deblur`, which can be modified by `config.data_offset` in `./configs/config.py`.
+
+3. **Pre-trained models**
+    * Download and unzip [pretrained weights](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0) under `./ckpt/`:
+
+        ```
+        ├── ./ckpt
+        │   ├── IFAN.pytorch
+        │   ├── ...
+        │   ├── IFAN_dual.pytorch
+        ``` 
+
+### Logs
+* Training and tesing logs will be saved under `[LOG_ROOT]/IFAN_CVPR2021/[mode]/`:
+
+    ```
+    ├── [LOG_ROOT]
+    │   ├── IFAN_CVPR2021
+    │   │   ├── [mode]
+    │   │   │   ├── checkpoint      # model checkpoint and resume states
+    │   │   │   ├── log             # scalar/image log for tensorboard
+    │   │   │   ├── sample          # sample images of training and validation
+    │   │   │   ├── config          # config file
+    │   │   │   ├── result          # results images of evaluation
+    │   │   │   ├── cost.txt        # network size and MACs measured on an image of the size (1, 3, 1280, 720)
+    │   │   │   ├── [network].py    # network file
+    ```
+
+    * In `./config/config.py`, you may configure following items:
+        * `config.log_offset`: configures `[LOG_ROOT]`. Default: `./logs`
+        * `config.write_ckpt_every_epoch`: configures an epoch period for saving checkpoints, resume states and scalar logs. Default: 4
+        * `config.write_log_every_itr`: configures an iteration period for saving sample images. Default: `{'train':200, 'valid': 1}`
+        * `config.refresh_image_log_every_epoch`: configures an epoch period for erasing sample images. Defualt: `{'train':20, 'valid':20}`
+
+## Testing models of CVPR2021
+
+```shell
+## Table 2 in the main paper
+# Our final model used for comparison
+python run.py --mode IFAN --network IFAN --config config_IFAN --data DPDD --ckpt_abs_name ckpt/IFAN.pytorch
+
+## Table 4 in the main paper
+# Our final model with N=8
+python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --data DPDD --ckpt_abs_name ckpt/IFAN_8.pytorch
+
+# Our final model with N=26
+python run.py --mode IFAN_26 --network IFAN --config config_IFAN_26 --data DPDD --ckpt_abs_name ckpt/IFAN_26.pytorch
+
+# Our final model with N=35
+python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --data DPDD --ckpt_abs_name ckpt/IFAN_35.pytorch
+
+# Our final model with N=44
+python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --data DPDD --ckpt_abs_name ckpt/IFAN_44.pytorch
+
+## Table 1 in the supplementary material
+# Our model trained with 16 bit images
+python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --data DPDD --ckpt_abs_name ckpt/IFAN_16bit.pytorch
+
+## Table 2 in the supplementary material
+# Our model taking dual-pixel stereo images as an input
+python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --data DPDD --ckpt_abs_name ckpt/IFAN_dual.pytorch
+```
+
+> **Note:**
+>
+> Testing results will be saved in `[LOG_ROOT]/IFAN_CVPR2021/[mode]/result/quanti_quali/[mode]_[epoch]/[data]/`.
+* Options
+    * `--data`: The name of a dataset to evaluate. `DPDD` | `RealDOF` |  `CUHK` | `PixelDP` | `random`. Default: `DPDD`
+        * The folder structure can be modified in the function `set_eval_path(..)` in `./configs/config.py`.
+        * `random` is for testing models with any images, which should be placed as `[DATASET_ROOT]/random/*.[jpg|png]`. 
+
+
+## Training & testing the network
+### Training
+
+```shell
+# multi GPU (with DistributedDataParallel) example
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_node=4 --master_port=9000 run.py \
+            --is_train \
+            --mode IFAN \
+            --config config_IFAN \
+            --trainer trainer \
+            --network IFAN \
+            -b 2 \
+            -th 8 \
+            -dl \
+            -ss \
+            -dist
+
+# resuming example (trainer will load checkpoint saved after 100 epoch, training resumes from 101 epoch)
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_node=4 --master_port=9000 run.py \
+            ... \
+            -th 8 \
+            -r 100 \
+            -ss \
+            -dist
+
+# single GPU (with DataParallel) example
+CUDA_VISIBLE_DEVICES=0 python -B run.py \
+            ... \
+            -ss
+```
+
+> **Note:**
+>
+> * The image loss (MSE) will be applied no matter what.
+> * If `IFAN` is included in `[mode]`, it will trigger both disparity and reblurring losses.
+> * To separately apply each of the disparity and the reblurring losses, do not include `IFAN` in `[mode]` but trigger each loss by including `D`(for the disparity loss) or `R`(for the reblurring loss) in `[mode]` (*e.g.*, `--mode my_net_D`).
+> * To train a network that takes dual-pixel stereo images as an input, `dual` should be included in the option `[mode]`, and `IFAN_dual` should be specified for the option `[network]`.
+
+* Options
+    <details>
+        <summary><i>Click here</i></summary>
+
+    * `--is_train`: If it is specified, `run.py` will train the network. Default: `False`
+    * `--mode`: The name of a model to train. The logging folder named with the `[mode]` will be created as `[LOG_ROOT]/IFAN_CVPR2021/[mode]/`. Default: `IFAN`
+    * `--config`: The name of a config file located as `./config/[config].py`. Default: `None`, and the default should not be changed.
+    * `--trainer`: The name of a trainer file located as `./models/trainers/[trainer].py`. Default: `trainer`
+    * `--network`: The name of a network file located as `./models/archs/[network].py`. Default: `IFAN`
+    * `-b`, `--batch_size`: The batch size. For the multi GPUs (`DistributedDataParallel`), the total batch size will be, `nproc_per_node * b`. Default: 8
+    * `-th`, `--thread_num`: The number of threads (`num_workers`) for the data loader. Default: 8
+    * `-dl`, `--delete_log`: The option whether to delete logs under `[mode]` (i.e., `[LOG_ROOT]/IFAN_CVPR2021/[mode]/*`). The option works only when `--is_train` is specified. Default: `False`
+    * `-r`, `--resume`: Resume training with the specified epoch (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
+    * `-ss`, `--save_sample`: Save sample images for both training and testing. Images will be saved in `[LOG_ROOT]/PVDNet_TOG2021/[mode]/sample/`. Default: `False`
+    * `-dist`: Enables multi-processing with `DistributedDataParallel`. Default: `False`
+
+    </details>
+
+### Testing
+
+```shell
+python run.py --mode [mode] --data [DATASET]
+# e.g., python run.py --mode IFAN --data DPDD
+```
+
+> **Note:**
+>
+> * Specify only `[mode]` of the trained model. `[config]` doesn't have to be specified, as it will be automatically loaded.
+> * Testing results will be saved in `[LOG_ROOT]/IFAN_CVPR2021/[mode]/result/quanti_quali/[mode]_[epoch]/[data]/`.
+
+* Options
+    <details>
+        <summary><i>Click here</i></summary>
+
+    * `--mode`: The name of a model to test.
+    * `--data`: The name of a dataset for evaluation: `DPDD` | `RealDOF` | `CUHK` | `PixelDP` | `random`. Default: `DPDD`
+        * The data structure can be modified by the function `set_eval_path(..)` in `./configs/config.py`.
+        * `random` is for testing models with any images, which should be placed as `[DATASET_ROOT]/random/*.[jpg|png]`.
+    * `-ckpt_name`: Loads the checkpoint with the name of the checkpoint under `[LOG_ROOT]/IFAN_CVPR2021/[mode]/checkpoint/train/epoch/ckpt/` (e.g., `python run.py --mode IFAN --data DPDD --ckpt_name IFAN_00100.pytorch`).
+    * `-ckpt_abs_name`. Loads the checkpoint of the absolute path (e.g., `python run.py --mode IFAN --data DPDD --ckpt_abs_name ./ckpt/IFAN.pytorch`).
+    * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 100`). 
+    * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
+
+    </details>
+
+## Citation
 If you find this code useful, please consider citing:
+
 ```
 @InProceedings{Lee_2021_CVPR,
-author = {Lee, Junyong and Son, Hyeongseok and Rim, Jaesung and Cho, Sunghyun and Lee, Seungyong},
-title = {Iterative Filter Adaptive Network for Single Image Defocus Deblurring},
-booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-month = {June},
-year = {2021}
+    author = {Lee, Junyong and Son, Hyeongseok and Rim, Jaesung and Cho, Sunghyun and Lee, Seungyong},
+    title = {Iterative Filter Adaptive Network for Single Image Defocus Deblurring},
+    booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month = {June},
+    year = {2021}
 }
 ```
 
-For any inquiries, please contact [junyonglee@postech.ac.kr](mailto:junyonglee@postech.ac.kr)
+## Contact
+Open an issue for any inquiries.
+You may also have contact with [junyonglee@postech.ac.kr](mailto:junyonglee@postech.ac.kr)
 
 ## Resources
-
 All material related to our paper is available by following links:
 
 | Link |
@@ -35,119 +251,21 @@ All material related to our paper is available by following links:
 | [The main paper]() |
 | [Supplementary](https://www.dropbox.com/s/6wv6ppxsaofbix6/IFAN_supp.pdf?dl=0) |
 | [Checkpoint Files](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0) |
-| The DPDD dataset ([download](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0)/[reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
-| The PixelDP test set ([download](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0)/[reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
-| The CUHK dataset ([download](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0)/[reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
+| [The DPDD dataset](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0) ([reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
+| [The PixelDP test set](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0) ([reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
+| [The CUHK dataset](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) ([reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
 | [The RealDOF test set](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0) |
-*The main paper and supplementary are provisional accepted versions. They will be updated when camera ready versions are ready*
 
-## Training & testing of the network
-*Requirements*: `pip install -r requirements.txt`
-### Training
->Download and Place [DPDD dataset](https://www.dropbox.com/s/y0cc3loytfbd81h/DPDD.zip?dl=0) under `./datasets` (the offset can be modified by `config.data_offset` in `./configs/config.py`).
-
-```bash
-# multi GPU (with DistributedDataParallel) example
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -B -m torch.distributed.launch --nproc_per_node=4 --master_port=9000 run.py \
---is_train \
---mode IFAN \
---config config_IFAN \
---trainer trainer \
---network IFAN \
--b 2 \
--th 8 \
--dl \
--dist
-
-# single GPU (with DataParallel) example
-CUDA_VISIBLE_DEVICES=0 python -B run.py \
---is_train \
---mode IFAN \
---config config_IFAN \
---trainer trainer \
---network IFAN \
--b 8 \
--th 8 \
--dl
-```
-* options
-    * `--is_train`: If it is specified, `run.py` will train the network.  
-    * `--mode`: The name of a training mode. The logging folder named with the `mode` will be created under `./logs/Defocus_Deblurring/[mode]`. 
-    * `--config`: The name of a config file located as in `./config/[config].py`.
-    * `--trainer`: The name of a trainer file located as in `./models/trainers/[trainer].py`.
-    * `--network`: The name of a network file located as in `./models/archs/[network].py`.
-    * `-b`: The batch size. With multi GPUs, (`DistributedDataParallel`), the total batch size will be, `nproc_per_node * b`.
-    * `-th`: The number of threads (`num_workers`) for the data loader (defined in `./models/baseModel`).
-    * `-dl`: The option whether to delete logs under `mode` (i.e., `./logs/Defocus_Deblurring/[mode]/*`). The option works only when `--is_train` is specified.
-    * `-r`: Resume training with the specified epoch # (e.g., `-r 100`). Note that `-dl` should not be specified with this option.
-    * `-dist`: whether to use `DistributedDataParallel`.
-* logs
-    * The root offset of logs is `./logs`. It can be changed by `config.log_offset` in `./config/config.py`. In `./logs/Defocus_Deblurring/[mode]/`, checkpoints, resume states, config, scalar logs for tensorboard and testing results will be saved.
-    * Currently, the logs will be saved for every 4 epochs, which can be reset by `config.write_ckpt_every_epoch` in `./config/config.py`.
-
-### Testing
-```bash
-python run.py --mode [MODE] --data [DATASET]
-# e.g., python run.py --mode IFAN --data DPDD
-```
-* options
-    * `--mode`: The name of the training mode that you want to test.
-    * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP, any`, and their path can be modified by the function `set_eval_path(..)` in `./configs/config.py`.
-    * `-ckpt_name`: Loads the checkpoint with the name of the checkpoint under `./logs/Defocus_Deblurring/[mode]/checkpoint/train/epoch/ckpt/` (e.g., `python run.py --mode IFAN --data DPDD --ckpt_name IFAN_00000.pytorch`).
-    * `-ckpt_abs_name`. Loads the checkpoint of the absolute path (e.g., `python run.py --mode IFAN --data DPDD --ckpt_abs_name ./checkpoints/IFAN.pytorch`).
-    * `-ckpt_epoch`: Loads the checkpoint of the specified epoch (e.g., `python run.py --mode IFAN --data DPDD --ckpt_epoch 0`). 
-    * `-ckpt_sc`: Loads the checkpoint with the best validation score (e.g., `python run.py --mode IFAN --data DPDD --ckpt_sc`)    
-* results
-    * Testing results will be saved in `./logs/Defocus_Deblurring/[mode]/result/quanti_quali/[mode]_[epoch]/data`.
-
-## Testing with pre-trained weights of CVPR2021
-> Download pretrained weights from [here](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0). Then, unzip them under `./checkpoints`.
-
-> Download and place test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `./datasets` (the offset can be modified by `config.EVAL.test_offset` in `./configs/config.py`).
-
-1. To test the final model,
-    ```bash
-    # Our final model 
-    python run.py --mode IFAN --network IFAN --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN.pytorch
-    ```
-    * `--data`: The name of a dataset for evaluation. We have `DPDD, RealDOF, CUHK, PixelDP, any`, and their path can be modified by the function `set_eval_path(..)` in `./configs/config.py`. `--data any` is for testing models with any images, which should be placed under the folder `./datasets/any`. 
-
-
-2. To test our models used for evaluations in the paper,
-    ```bash
-    ## Table 4 in the main paper
-    # Our final model with N=8
-    python run.py --mode IFAN_8 --network IFAN --config config_IFAN_8 --data DPDD --ckpt_abs_name checkpoints/IFAN_8.pytorch
-
-    # Our final model with N=26
-    python run.py --mode IFAN_26 --network IFAN --config config_IFAN_26 --data DPDD --ckpt_abs_name checkpoints/IFAN_26.pytorch
-
-    # Our final model with N=35
-    python run.py --mode IFAN_35 --network IFAN --config config_IFAN_35 --data DPDD --ckpt_abs_name checkpoints/IFAN_35.pytorch
-
-    # Our final model with N=44
-    python run.py --mode IFAN_44 --network IFAN --config config_IFAN_44 --data DPDD --ckpt_abs_name checkpoints/IFAN_44.pytorch
-
-    ## Table 1 in the supplementary material
-    # Our model trained with 16 bit images
-    python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --data DPDD --ckpt_abs_name checkpoints/IFAN_16bit.pytorch
-
-    ## Table 2 in the supplementary material
-    # Our model for dual-pixel stereo inputs 
-    python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --data DPDD --ckpt_abs_name checkpoints/IFAN_dual.pytorch
-    ```
-
-
-## License ##
+## License
 This software is being made available under the terms in the [LICENSE](LICENSE) file.
 
 Any exemptions to these terms require a license from the Pohang University of Science and Technology.
 
-## About Coupe Project ##
+## About Coupe Project
 Project ‘COUPE’ aims to develop software that evaluates and improves the quality of images and videos based on big visual data. To achieve the goal, we extract sharpness, color, composition features from images and develop technologies for restoring and improving by using them. In addition, personalization technology through user reference analysis is under study.  
     
 Please checkout other Coupe repositories in our [Posgraph](https://github.com/posgraph) github organization.
 
-## Useful Links ##
+### Useful Links
 * [Coupe Library](http://coupe.postech.ac.kr/)
 * [POSTECH CG Lab.](http://cg.postech.ac.kr/)

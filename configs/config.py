@@ -11,11 +11,12 @@ def get_config(project = '', mode = '', config_ = ''):
     config.mode = mode
     config.config = config_
     config.is_train = False
-    config.thread_num = 1
+    config.thread_num = 8
     config.dist = False
     config.resume = None # 'resume epoch'
     config.manual_seed = 0
     config.is_verbose = False
+    config.save_sample = False
 
     ##################################### TRAIN #####################################
     config.trainer = ''
@@ -44,8 +45,8 @@ def get_config(project = '', mode = '', config_ = ''):
     config.beta1 = 0.9
 
     # data dir
-    # config.data_offset = '/data1/junyonglee'
-    config.data_offset = 'datasets'
+    config.data_offset = '/data1/junyonglee/defocus_deblur'
+    #config.data_offset = 'datasets/defocus_deblur'
     config.c_path = os.path.join(config.data_offset, 'DPDD/train_c')
     config.l_path = os.path.join(config.data_offset, 'DPDD/train_l')
     config.r_path = os.path.join(config.data_offset, 'DPDD/train_r')
@@ -61,7 +62,8 @@ def get_config(project = '', mode = '', config_ = ''):
 
     # log dirs
     config.LOG_DIR = edict()
-    log_offset = './logs'
+    #log_offset = './logs'
+    log_offset = '/Jarvis/logs/junyonglee'
     log_offset = os.path.join(log_offset, config.project)
     log_offset = os.path.join(log_offset, '{}'.format(mode))
     config.LOG_DIR.offset = log_offset
@@ -96,8 +98,6 @@ def get_config(project = '', mode = '', config_ = ''):
     config.EVAL.ckpt_load_path = None
 
     # data dir
-    config.EVAL.test_offset = 'datasets'
-    # config.EVAL.test_offset = '/data1/junyonglee'
     config.EVAL.c_path = None
     config.EVAL.l_path = None
     config.EVAL.r_path = None
@@ -113,28 +113,28 @@ def get_config(project = '', mode = '', config_ = ''):
 
 def set_eval_path(config, data):
     if data == 'DPDD':
-        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_c')
-        config.EVAL.l_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_l')
-        config.EVAL.r_path = os.path.join(config.EVAL.test_offset, 'DPDD/test_r')
+        config.EVAL.c_path = os.path.join(config.data_offset, 'DPDD/test_c')
+        config.EVAL.l_path = os.path.join(config.data_offset, 'DPDD/test_l')
+        config.EVAL.r_path = os.path.join(config.data_offset, 'DPDD/test_r')
         # child paths
-        config.EVAL.input_path = 'source' 
+        config.EVAL.input_path = 'source'
         config.EVAL.gt_path = 'target'
 
     elif data == 'PixelDP':
-        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_c')
-        config.EVAL.l_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_l')
-        config.EVAL.r_path = os.path.join(config.EVAL.test_offset, 'PixelDP/test_r')
+        config.EVAL.c_path = os.path.join(config.data_offset, 'PixelDP/test_c')
+        config.EVAL.l_path = os.path.join(config.data_offset, 'PixelDP/test_l')
+        config.EVAL.r_path = os.path.join(config.data_offset, 'PixelDP/test_r')
     elif data == 'RealDOF':
-        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'RealDOF')
+        config.EVAL.c_path = os.path.join(config.data_offset, 'RealDOF')
         # child paths
-        config.EVAL.input_path = 'source' 
+        config.EVAL.input_path = 'source'
         config.EVAL.gt_path = 'target'
-        
-    elif data == 'CUHK':
-        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'CUHK')
 
-    elif data == 'any':
-        config.EVAL.c_path = os.path.join(config.EVAL.test_offset, 'any')
+    elif data == 'CUHK':
+        config.EVAL.c_path = os.path.join(config.data_offset, 'CUHK')
+
+    elif data == 'random':
+        config.EVAL.c_path = os.path.join(config.data_offset, 'random')
 
     return config
 

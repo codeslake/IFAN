@@ -19,8 +19,8 @@ class Network(nn.Module):
         self.Fs = config.Fs
         res_num = config.res_num
 
-        ch1 = config.ch 
-        ch2 = ch1 * 2 
+        ch1 = config.ch
+        ch2 = ch1 * 2
         ch3 = ch1 * 4
         ch4 = ch1 * 4
         self.ch4 = ch4
@@ -162,8 +162,11 @@ class Network(nn.Module):
 
         # results
         outs = collections.OrderedDict()
-        outs['result'] = out
-        if is_train:
+        
+        if is_train is False:
+            outs['result'] = torch.clip(out, 0, 1.0)
+        else:
+            outs['result'] = out
             # F
             outs['Filter'] = F
 

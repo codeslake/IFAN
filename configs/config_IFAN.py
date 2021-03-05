@@ -1,7 +1,6 @@
 from configs.config import get_config as main_config
 from configs.config import log_config, print_config
 
-
 def get_config(project = '', mode = '', config = ''):
     ## GLOBAL
     config = main_config(project, mode, config)
@@ -16,6 +15,7 @@ def get_config(project = '', mode = '', config = ''):
 
     config.Fs = 3 # filter size
     config.N = 17
+    config.refine_val = 8
 
     # weight init
     config.wi = 1.0

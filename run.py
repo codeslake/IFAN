@@ -62,7 +62,7 @@ class Trainer():
 
     def train(self):
         torch.backends.cudnn.benchmark = True
-        if self.rank <= 0 : print(toYellow('======== TRAINING START ========='))
+        if self.rank <= 0 : print(toYellow('\n\n=========== TRAINING START ============'))
         for epoch in self.epoch_range:
             if self.rank <= 0 and epoch == 1:
                 if self.config.resume is None:
@@ -95,7 +95,6 @@ class Trainer():
                         if self.rank <= 0:
                             torch.cuda.synchronize()
                             if state == 'train':
-                                # print_logs(state.upper() + ' TOTAL', self.config.mode, epoch, self.max_epoch, epoch_time, errs = self.err_epoch[state], lr = self.lr)
                                 print_logs(state.upper() + ' TOTAL', self.config.mode, epoch, self.max_epoch, epoch_time, iter = self.model.itr_global[state], iter_total = self.config.total_itr, errs = self.err_epoch[state], lr = self.lr, is_overwrite = False)
                             else:
                                 print_logs(state.upper() + ' TOTAL', self.config.mode, epoch, self.max_epoch, epoch_time, errs = self.err_epoch[state], lr = self.lr, is_overwrite = False)
@@ -161,27 +160,20 @@ class Trainer():
                 if self.rank <= 0:
                     if config.save_sample:
                         # saves image patches for logging
-                        inputs = self.model.results['inputs']
-                        outs = self.model.results['outs']
+                        vis = self.model.results['vis']
                         sample_dir = self.config.LOG_DIR.sample if is_train else self.config.LOG_DIR.sample_val
                         if itr == 1 or self.model.itr_global[state] % config.write_log_every_itr[state] == 0:
                             try:
-                                for key, val in errs.items():
-                                    self.summary.add_scalar('loss/{}_{}'.format(key, state), val, self.model.itr_global[state])
-
-                                vutils.save_image(inputs['input'], '{}/{}_{}_1_input.jpg'.format(sample_dir, epoch, itr), nrow=3, padding = 0, normalize = False)
-                                i = 2
-                                for key, val in outs.items():
+                                i = 1
+                                for key, val in vis.items():
                                     if val.dim() == 5:
                                         for j in range(val.size()[1]):
-                                            vutils.save_image(val[:, j, :, :, :], '{}/{}_{}_{}_out_{}_{}.jpg'.format(sample_dir, epoch, itr, i, key, j), nrow=3, padding = 0, normalize = False)
+                                            vutils.save_image(val[:, j, :, :, :], '{}/E{:02}_I{:06}_{:02}_{}_{:03}.jpg'.format(sample_dir, epoch, self.model.itr_global[state], i, key, j), nrow=3, padding = 0, normalize = False)
                                     else:
-                                        vutils.save_image(val, '{}/{}_{}_{}_out_{}.jpg'.format(sample_dir, epoch, itr, i, key), nrow=3, padding = 0, normalize = False)
+                                        vutils.save_image(val, '{}/E{:02}_I{:06}_{:02}_{}.jpg'.format(sample_dir, epoch, self.model.itr_global[state], i, key), nrow=3, padding = 0, normalize = False)
                                     i += 1
-
-                                vutils.save_image(inputs['gt'], '{}/{}_{}_{}_gt.jpg'.format(sample_dir, epoch, itr, i), nrow=3, padding = 0, normalize = False)
                             except Exception as ex:
-                                if self.rank <= 0 :  print('saving error: ', ex)
+                                print('\n\n\n\nsaving error: ', ex, '\n\n\n\n')
 
                     self.lr = self.model.results['lr']
                     torch.cuda.synchronize()
@@ -198,7 +190,7 @@ def init_dist(backend='nccl', **kwargs):
     dist.init_process_group(backend=backend, **kwargs)
 
 if __name__ == '__main__':
-    project = 'Defocus_Deblurring'
+    project = 'IFAN_CVPR2021'
     mode = 'IFAN'
 
     import importlib
@@ -206,7 +198,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--is_train', action = 'store_true', default = False, help = 'whether to delete log')
-    parser.add_argument('--config', type = str, default = None, help = 'config name')
+    parser.add_argument('--config', type = str, default = None, help = 'config name') # do not change the default value
     parser.add_argument('--mode', type = str, default = mode, help = 'mode name')
     parser.add_argument('--project', type = str, default = project, help = 'project name')
     args, _ = parser.parse_known_args()
@@ -217,8 +209,8 @@ if __name__ == '__main__':
         config.is_train = True
 
         ## DEFAULT
-        parser.add_argument('-trainer', '--trainer', type = str, default = config.mode, help = 'model name')
-        parser.add_argument('-net', '--network', type = str, default = config.mode, help = 'network name')
+        parser.add_argument('-trainer', '--trainer', type = str, default = 'trainer', help = 'model name')
+        parser.add_argument('-net', '--network', type = str, default = 'IFAN', help = 'network name')
         parser.add_argument('-r', '--resume', type = str, default = config.resume, help = 'name of state or ckpt (names are the same)')
         parser.add_argument('-dl', '--delete_log', action = 'store_true', default = False, help = 'whether to delete log')
         parser.add_argument('-lr', '--lr_init', type = float, default = config.lr_init, help = 'leraning rate')
@@ -314,8 +306,8 @@ if __name__ == '__main__':
         parser.add_argument('-ckpt_epoch', '--ckpt_epoch', type=int, default = None, help='ckpt epoch')
         parser.add_argument('-ckpt_sc', '--ckpt_score', action = 'store_true', help='ckpt name')
         parser.add_argument('-dist', '--dist', action = 'store_true', default = False, help = 'whether to distributed pytorch')
-        parser.add_argument('-eval_mode', '--eval_mode', type=str, default = 'quan', help = 'evaluation mode. qual(qualitative)/quan(quantitative)')
-        parser.add_argument('-data', '--data', type=str, default = 'DPDD', help = 'dataset to evaluate(DPDD/PixelDP/RealDOF/any)')
+        parser.add_argument('-eval_mode', '--eval_mode', type=str, default = 'quan', help = 'evaluation mode. qual(qualitative)|quan(quantitative)')
+        parser.add_argument('-data', '--data', type=str, default = 'DPDD', help = 'dataset to evaluate(DPDD|PixelDP|RealDOF|random)')
         args, _ = parser.parse_known_args()
 
         config.network = args.network
