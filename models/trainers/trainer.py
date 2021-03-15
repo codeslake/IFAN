@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.parallel import DataParallel as DP
 from torch.nn.parallel import DistributedDataParallel as DDP
+import torch.distributed as dist
+
 import numpy as np
 import collections
 import torch_optimizer as optim
@@ -42,7 +44,17 @@ class Model(baseModel):
         self.network = DeblurNet(config, lib).to(torch.device('cuda'))
 
         ## LPIPS network
-        self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+        if self.rank <= 0: print(toRed('\tinitializing LPIPS'))
+        if config.dist:
+            ## download pretrined checkpoint from 0th process
+            if self.rank <= 0:
+                self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+            dist.barrier()
+            if self.rank > 0:
+                self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+
+        else:
+            self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
         for param in self.LPIPS.parameters():
             param.requires_grad_(False)
 

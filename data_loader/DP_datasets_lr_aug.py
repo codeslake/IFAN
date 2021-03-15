@@ -18,16 +18,16 @@ class datasets(data.Dataset):
         self.max_sig = config.max_sig
 
         if is_train:
-            self.l_folder_path_list, self.l_file_path_list, _ = load_file_list(config.l_path, config.input_path)
-            self.r_folder_path_list, self.r_file_path_list, _ = load_file_list(config.r_path, config.input_path)
-            self.c_folder_path_list, self.c_file_path_list, _ = load_file_list(config.c_path, config.input_path)
-            self.gt_folder_path_list, self.gt_file_path_list, _ = load_file_list(config.c_path, config.gt_path)
+            self.l_folder_path_list, self.l_file_path_list, _ = load_file_list(config.l_path, config.input_path, is_flatten = True)
+            self.r_folder_path_list, self.r_file_path_list, _ = load_file_list(config.r_path, config.input_path, is_flatten = True)
+            self.c_folder_path_list, self.c_file_path_list, _ = load_file_list(config.c_path, config.input_path, is_flatten = True)
+            self.gt_folder_path_list, self.gt_file_path_list, _ = load_file_list(config.c_path, config.gt_path, is_flatten = True)
             self.is_augment = True
         else:
-            self.l_folder_path_list, self.l_file_path_list, _ = load_file_list(config.VAL.l_path, config.VAL.input_path)
-            self.r_folder_path_list, self.r_file_path_list, _ = load_file_list(config.VAL.r_path, config.VAL.input_path)
-            self.c_folder_path_list, self.c_file_path_list, _ = load_file_list(config.VAL.c_path, config.VAL.input_path)
-            self.gt_folder_path_list, self.gt_file_path_list, _ = load_file_list(config.VAL.c_path, config.VAL.gt_path)
+            self.l_folder_path_list, self.l_file_path_list, _ = load_file_list(config.VAL.l_path, config.VAL.input_path, is_flatten = True)
+            self.r_folder_path_list, self.r_file_path_list, _ = load_file_list(config.VAL.r_path, config.VAL.input_path, is_flatten = True)
+            self.c_folder_path_list, self.c_file_path_list, _ = load_file_list(config.VAL.c_path, config.VAL.input_path, is_flatten = True)
+            self.gt_folder_path_list, self.gt_file_path_list, _ = load_file_list(config.VAL.c_path, config.VAL.gt_path, is_flatten = True)
             self.is_augment = False
 
         self.len = int(np.ceil(len(self.l_file_path_list)))
@@ -48,7 +48,7 @@ class datasets(data.Dataset):
             if random.uniform(0, 1) <= 0.05:
             # if random.uniform(0, 1) >= 0.0:
                 row,col,ch = l_frame[0].shape
-                mean = 0
+                mean = 0.0
                 sigma = random.uniform(0.001, self.max_sig)
                 gauss = np.random.normal(mean,sigma,(row,col,ch))
                 gauss = gauss.reshape(row,col,ch)
@@ -56,7 +56,6 @@ class datasets(data.Dataset):
                 l_frame = np.expand_dims(np.clip(l_frame[0] + gauss, 0.0, 1.0), axis = 0)
                 r_frame = np.expand_dims(np.clip(r_frame[0] + gauss, 0.0, 1.0), axis = 0)
                 c_frame = np.expand_dims(np.clip(c_frame[0] + gauss, 0.0, 1.0), axis = 0)
-                gt_frame = np.expand_dims(np.clip(gt_frame[0] + gauss, 0.0, 1.0), axis = 0)
 
             # Grayscale
             if random.uniform(0, 1) <= 0.3:

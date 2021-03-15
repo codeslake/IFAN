@@ -77,12 +77,15 @@ def refine_image_pt(image, val = 16):
 
     return image[:, :, :refine_h, :refine_w]
 
-def load_file_list(root_path, child_path = None):
+def load_file_list(root_path, child_path = None, is_flatten = False):
     folder_paths = []
     filenames_pure = []
     filenames_structured = []
     num_files = 0
     for root, dirnames, filenames in os.walk(root_path):
+        # print('root: ', root)
+        # print('dirnames: ', dirnames)
+        # print('filenames: ', filenames)
         if len(dirnames) != 0:
             if dirnames[0][0] == '@':
                 del(dirnames[0])
@@ -97,17 +100,24 @@ def load_file_list(root_path, child_path = None):
             for i in np.arange(len(filenames)):
                 if filenames[i][0] != '.' and filenames[i] != 'Thumbs.db':
                     filenames_pure.append(os.path.join(root, filenames[i]))
-            filenames_structured.append(np.array(sorted(filenames_pure)))
+            filenames_pure
+            filenames_structured.append(np.array(sorted(filenames_pure), dtype='str'))
             num_files += len(filenames_pure)
 
     folder_paths = np.array(folder_paths)
-    filenames_structured = np.array(filenames_structured)
+    filenames_structured = np.array(filenames_structured, dtype=object)
 
     sort_idx = np.argsort(folder_paths)
     folder_paths = folder_paths[sort_idx]
     filenames_structured = filenames_structured[sort_idx]
 
-    return folder_paths, np.squeeze(filenames_structured), np.squeeze(num_files)
+    if is_flatten:
+        if len(filenames_structured) > 1:
+            filenames_structured = np.concatenate(filenames_structured).ravel()
+        else:
+            filenames_structured = filenames_structured.flatten()
+
+    return folder_paths, filenames_structured, num_files
 
 def get_base_name(path):
     return os.path.basename(path.split('.')[0])

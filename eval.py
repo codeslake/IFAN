@@ -16,7 +16,7 @@ from skimage.metrics import structural_similarity
 import collections
 
 from utils import *
-from data_loader.utils import refine_image, read_frame
+from data_loader.utils import load_file_list, read_frame, refine_image
 from ckpt_manager import CKPT_Manager
 
 from models import create_model
@@ -61,12 +61,12 @@ def init(config, mode = 'deblur'):
     input_r_file_path_list = None
     gt_file_path_list = None
 
-    _, input_c_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.input_path)
+    _, input_c_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.input_path, is_flatten=True)
     if config.EVAL.l_path is not None:
-        _, input_l_file_path_list, _ = load_file_list(config.EVAL.l_path, config.EVAL.input_path)
-        _, input_r_file_path_list, _ = load_file_list(config.EVAL.r_path, config.EVAL.input_path)
+        _, input_l_file_path_list, _ = load_file_list(config.EVAL.l_path, config.EVAL.input_path, is_flatten=True)
+        _, input_r_file_path_list, _ = load_file_list(config.EVAL.r_path, config.EVAL.input_path, is_flatten=True)
     if config.EVAL.gt_path is not None:
-        _, gt_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.gt_path)
+        _, gt_file_path_list, _ = load_file_list(config.EVAL.c_path, config.EVAL.gt_path, is_flatten=True)
 
     save_path_deblur = os.path.join(save_path_root_deblur)
     Path(save_path_deblur).mkdir(parents=True, exist_ok=True)
