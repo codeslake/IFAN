@@ -59,7 +59,7 @@ This repository contains the official PyTorch implementation of the following pa
     * `pip install -r requirements.txt`
 
 2. **Datasets**
-    * Download and unzip test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0)) under `[DATASET_ROOT]`:
+    * Download and unzip test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1)) under `[DATASET_ROOT]`:
 
         ```
         ├── [DATASET_ROOT]
@@ -74,7 +74,7 @@ This repository contains the official PyTorch implementation of the following pa
         >`[DATASET_ROOT]` is currently set to `./datasets/defocus_deblur`, which can be modified by `config.data_offset` in `./configs/config.py`.
 
 3. **Pre-trained models**
-    * Download and unzip [pretrained weights](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0) under `./ckpt/`:
+    * Download and unzip [pretrained weights](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1) under `./ckpt/`:
 
         ```
         ├── ./ckpt
@@ -249,12 +249,12 @@ All material related to our paper is available by following links:
 | Link |
 | :-------------- |
 | [The main paper]() |
-| [Supplementary](https://www.dropbox.com/s/6wv6ppxsaofbix6/IFAN_supp.pdf?dl=0) |
-| [Checkpoint Files](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=0) |
-| [The DPDD dataset](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=0) ([reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
-| [The PixelDP test set](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=0) ([reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
-| [The CUHK dataset](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=0) ([reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
-| [The RealDOF test set](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=0) |
+| [Supplementary](https://www.dropbox.com/s/6wv6ppxsaofbix6/IFAN_supp.pdf?dl=1) |
+| [Checkpoint Files](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1) |
+| [The DPDD dataset](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1) ([reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
+| [The PixelDP test set](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1) ([reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
+| [The CUHK dataset](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1) ([reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
+| [The RealDOF test set](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1) |
 
 ## License
 This software is being made available under the terms in the [LICENSE](LICENSE) file.
