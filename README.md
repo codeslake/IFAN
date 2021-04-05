@@ -31,9 +31,7 @@ This repository contains the official PyTorch implementation of the following pa
             <img width=80% src="./assets/IAC.jpg" />
         </p>
         <p>
-            The proposed IAC layer is inspired by Xu <i>et al.</i>’s <a href="https://jiaya.me/papers/inversekernel_eccv14.pdf">separable inverse filter approach</a> and Zhou <i>et al.</i>’s <a href="http://openaccess.thecvf.com/content_ICCV_2019/papers/Zhou_Spatio-Temporal_Filter_Adaptive_Network_for_Video_Deblurring_ICCV_2019_paper.pdf">FAC layer</a>.
-            The IAC layer approximates deblurring filters using a set of separable filters in the feature domain.
-            As convolution operations before and after an IAC layer in the feature domain naturally support linear combinations of different channels, the IAC layer can successfully approximate deblurring filters.
+            Separable filters in our IAC layer play a key role in resolving the limitation of <a href="https://jiaya.me/papers/inversekernel_eccv14.pdf">the FAC layer</a>. Our IAC layer secures larger receptive fields at much lower memory and computational costs than the FAC layer by utilizing 1-dim filters, instead of 2-dim convolutions. However, compared to dense 2-dim convolution filters in the FAC layer, our separable filters may not provide enough accuracy for deblurring filters. We handle this problem by iteratively applying separable filters to fully exploit the non-linear nature of a deep network. Our iterative scheme also enables small-sized separable filters to be used for establishing large receptive fields.
         </p>
         <h3> Disparity Map Estimation & Reblurring </h3>
         <p> To further improve the single image deblurring quality, we train our network with novel defocus-specific tasks: defocus disparity estimation and reblurring. </p>
