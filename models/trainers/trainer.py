@@ -163,7 +163,7 @@ class Model(baseModel):
         return lr
 
     ########################### Edit from here for training/testing scheme ###############################
-    def _set_results(self, inputs, outs, errs, norm, lr, is_train):
+    def _set_results(self, inputs, outs, errs, lr, norm=1):
 
         # save visuals (inputs)
         if self.config.save_sample:
@@ -256,7 +256,7 @@ class Model(baseModel):
 
         # set results for the log
         norm, _, _, _ = outs['result'].shape
-        self._set_results(inputs, outs, errs, norm, lr, is_train)
+        self._set_results(inputs, outs, errs, lr, norm)
 
 class DeblurNet(nn.Module):
     def __init__(self, config, lib):
