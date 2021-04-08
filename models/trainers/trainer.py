@@ -79,7 +79,7 @@ class Model(baseModel):
         ### DDP ###
         if config.dist:
             if self.rank <= 0: print(toGreen('Building Dist Parallel Model...'))
-            self.network = DDP(self.network, device_ids=[torch.cuda.current_device()], output_device=torch.cuda.current_device(), broadcast_buffers=True, find_unused_parameters=True)
+            self.network = DDP(self.network, device_ids=[torch.cuda.current_device()], output_device=torch.cuda.current_device(), broadcast_buffers=True, find_unused_parameters=False)
         else:
             self.network = DP(self.network).to(torch.device('cuda'))
 
@@ -254,6 +254,11 @@ class Model(baseModel):
         errs, outs = self._get_results(C, R, L, GT, is_train)
         lr = self._update(errs, self.config.warmup_itr) if is_train else None
 
+        for k, v in outs.items():
+            outs[k] = v.detach()
+        for k, v in errs.items():
+            errs[k] = v.detach()
+
         # set results for the log
         norm, _, _, _ = outs['result'].shape
         self._set_results(inputs, outs, errs, lr, norm)
@@ -276,13 +281,13 @@ class DeblurNet(nn.Module):
             torch.nn.init.xavier_uniform_(m.weight, gain = self.config.wi)
             if m.bias is not None:
                 torch.nn.init.constant_(m.bias, 0)
-            elif type(m) == torch.nn.BatchNorm2d or type(m) == torch.nn.InstanceNorm2d:
-                if m.weight is not None:
-                    torch.nn.init.constant_(m.weight, 1)
-                    torch.nn.init.constant_(m.bias, 0)
-            elif type(m) == torch.nn.Linear:
-                torch.nn.init.normal_(m.weight, 0, 0.01)
+        elif type(m) == torch.nn.BatchNorm2d or type(m) == torch.nn.InstanceNorm2d:
+            if m.weight is not None:
+                torch.nn.init.constant_(m.weight, 1)
                 torch.nn.init.constant_(m.bias, 0)
+        elif type(m) == torch.nn.Linear:
+            torch.nn.init.normal_(m.weight, 0, 0.01)
+            torch.nn.init.constant_(m.bias, 0)
 
     def init(self):
         self.Network.apply(self.weights_init)

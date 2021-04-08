@@ -179,7 +179,11 @@ class Trainer():
 
                     self.lr = self.model.results['lr']
                     torch.cuda.synchronize()
-                    print_logs(state.upper(), self.config.mode, epoch, self.max_epoch, itr_time, itr * self.model.itr_inc[state], self.model.get_itr_per_epoch(state), errs = errs, lr = self.lr, is_overwrite = itr > 1)
+
+                    errs_itr = collections.OrderedDict()
+                    for k, v in errs.items():
+                        errs_itr[k] = v / norm
+                    print_logs(state.upper(), self.config.mode, epoch, self.max_epoch, itr_time, itr * self.model.itr_inc[state], self.model.get_itr_per_epoch(state), errs = errs_itr, lr = self.lr, is_overwrite = itr > 1)
 
 ##########################################################
 def init_dist(backend='nccl', **kwargs):
