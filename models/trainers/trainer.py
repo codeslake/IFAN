@@ -254,14 +254,16 @@ class Model(baseModel):
         errs, outs = self._get_results(C, R, L, GT, is_train)
         lr = self._update(errs, self.config.warmup_itr) if is_train else None
 
-        for k, v in outs.items():
-            outs[k] = v.detach()
-        for k, v in errs.items():
-            errs[k] = v.detach()
 
         # set results for the log
-        norm, _, _, _ = outs['result'].shape
-        self._set_results(inputs, outs, errs, lr, norm)
+        outs_ = collections.OrderedDict()
+        for k, v in outs.items():
+            outs_[k] = v.clone().detach()
+        errs_ = collections.OrderedDict()
+        for k, v in errs.items():
+            errs_[k] = v.clone().detach()
+        norm, _, _, _ = outs_['result'].shape
+        self._set_results(inputs, outs_, errs_, lr, norm)
 
 class DeblurNet(nn.Module):
     def __init__(self, config, lib):
@@ -305,9 +307,11 @@ class DeblurNet(nn.Module):
 
     #####################################################
     def forward(self, C, R=None, L=None, GT=None, is_train = False):
-        outs = self.Network(C, R, L, is_train or self.config.save_sample)
+        is_train = is_train or self.config.save_sample and self.config.is_train
 
-        if (is_train or self.config.save_sample) and ('R' in self.config.mode or 'IFAN' in self.config.mode):
+        outs = self.Network(C, R, L, is_train)
+
+        if is_train  and ('R' in self.config.mode or 'IFAN' in self.config.mode):
             outs_reblur = self.reblurNet(GT, outs['Filter'])
             outs.update(outs_reblur)
 
