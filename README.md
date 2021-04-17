@@ -69,8 +69,17 @@ This repository contains the official PyTorch implementation of the following pa
 ![PyTorch](https://img.shields.io/badge/PyTorch-1.7.1%20&%201.8.0-green.svg?style=plastic)
 ![CUDA](https://img.shields.io/badge/CUDA-10.2%20&%2011.1-green.svg?style=plastic)
 
-1. **Install requirements**
-    * `pip install -r requirements.txt`
+1. **Environment setup**
+    ```bash
+    $ git clone https://github.com/codeslake/IFAN.git
+    $ cd IFAN
+
+    $ conda create -y --name IFAN python=3.6 && conda activate IFAN
+    # for CUDA10.2
+    $ sh install_CUDA10.2.sh
+    # for CUDA11.1
+    $ sh install_CUDA11.1.sh
+    ```
 
 2. **Datasets**
     * Download and unzip test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1)) under `[DATASET_ROOT]`:
