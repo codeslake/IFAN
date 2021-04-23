@@ -119,12 +119,14 @@ class baseModel():
 
         assert len(resume_optimizers) == len(self.optimizers), 'Wrong lengths of optimizers'
         assert len(resume_schedulers) == len(self.schedulers), 'Wrong lengths of schedulers'
+
         for i, o in enumerate(resume_optimizers):
             self.optimizers[i].load_state_dict(o)
+            #resetting learning rate while resuming (learning rate of MultiStepLR_Restart and CosineAnneaelingLR_Restart will be reset)
             for g in self.optimizers[i].param_groups:
                 g['lr'] = self.config.lr_init
-                g['lr_init'] = self.config.lr_init
                 g['initial_lr'] = self.config.lr_init
+
         for i, s in enumerate(resume_schedulers):
             self.schedulers[i].load_state_dict(s)
             if 'MultiStepLR_Restart' in type(self.schedulers[i]).__name__:

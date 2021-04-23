@@ -1,18 +1,21 @@
 # IFAN: Iterative Filter Adaptive Network for Single Image Defocus Deblurring
 ![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-blue.svg?style=plastic)
 
-***Checkout for the demo ([GUI](https://YJ5YKNVB7BY5PN7Y.anvil.app/KNK4MOE27FW3VZNDQUNHAJAY)/[Google Colab](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing))!***
+***Check out for the demo ([GUI](https://YJ5YKNVB7BY5PN7Y.anvil.app/KNK4MOE27FW3VZNDQUNHAJAY)/[Google Colab](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing))!***
 <br/>*The GUI version might occasionally be offline*
-    
-<!-- ***Checkout for the demo in [Google Colab](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing)*** -->
 
-<p align="center">
-  <img width=95% src="./assets/IFAN_network.jpg" />
+<!-- ***Check out for the demo in [Google Colab](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing)*** -->
+
+<p align="left">
+  <a href="https://codeslake.github.io/publications/#IFAN">
+    <img width=85% src="./assets/teaser.gif"/>
+  </a><br>
 </p>
+
 
 This repository contains the official PyTorch implementation of the following paper:
 
-> **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring](http://cg.postech.ac.kr/papers/2020_CGI_JY.pdf)**<br>
+> **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring](https://www.dropbox.com/s/33ix3yzqz0q7xce/IFAN_main.pdf?raw=1)**<br>
 > Junyong Lee, Hyeongseok Son, Jaesung Rim, Sunghyun Cho, Seungyong Lee, CVPR 2021
 
 
@@ -20,6 +23,9 @@ This repository contains the official PyTorch implementation of the following pa
 <details>
     <summary><i>Click here</i></summary>
         <h2> Iterative Filter Adaptive Network (IFAN) </h2>
+        <p align="center">
+          <img width=95% src="./assets/IFAN_network.jpg" />
+        </p>
         <p> Our deblurring network is built upon a simple encoder-decoder architecture consisting of a feature extractor, reconstructor, and IFAN module in the middle. The feature extractor extracts defocused features and feeds them to IFAN. IFAN removes blur in the feature domain by predicting spatially-varying deblurring filters and applying them to the defocused features using IAC. The deblurred features from IFAN is then passed to the reconstructor, which restores an all-in-focus image.
         </p>
         <h3> Iterative Adaptive Convolution Layer </h3>
@@ -66,7 +72,7 @@ This repository contains the official PyTorch implementation of the following pa
 
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-16.0.4%20&%2018.0.4-blue.svg?style=plastic)
 ![Python](https://img.shields.io/badge/Python-3.8.8-green.svg?style=plastic)
-![PyTorch](https://img.shields.io/badge/PyTorch-1.7.1%20&%201.8.0-green.svg?style=plastic)
+![PyTorch](https://img.shields.io/badge/PyTorch-1.7.1%20&%201.8.0%20&%201.9.0-green.svg?style=plastic)
 ![CUDA](https://img.shields.io/badge/CUDA-10.2%20&%2011.1-green.svg?style=plastic)
 
 1. **Environment setup**
@@ -74,7 +80,7 @@ This repository contains the official PyTorch implementation of the following pa
     $ git clone https://github.com/codeslake/IFAN.git
     $ cd IFAN
 
-    $ conda create -y --name IFAN python=3.6 && conda activate IFAN
+    $ conda create -y --name IFAN python=3.8 && conda activate IFAN
     # for CUDA10.2
     $ sh install_CUDA10.2.sh
     # for CUDA11.1
@@ -104,7 +110,7 @@ This repository contains the official PyTorch implementation of the following pa
         │   ├── IFAN.pytorch
         │   ├── ...
         │   ├── IFAN_dual.pytorch
-        ``` 
+        ```
 
 ## Testing models of CVPR2021
 
@@ -143,7 +149,7 @@ CUDA_VISIBLE_DEVICES=0 python run.py --mode IFAN_dual --network IFAN_dual --conf
 * Options
     * `--data`: The name of a dataset to evaluate. `DPDD` | `RealDOF` | `CUHK` | `PixelDP` | `random`. Default: `DPDD`
         * The folder structure can be modified in the function [`set_eval_path(..)`](https://github.com/codeslake/IFAN/blob/main/configs/config.py#L114-L139) in `./configs/config.py`.
-        * `random` is for testing models with any images, which should be placed as `[DATASET_ROOT]/random/*.[jpg|png]`. 
+        * `random` is for testing models with any images, which should be placed as `[DATASET_ROOT]/random/*.[jpg|png]`.
 
 ## Wiki
 * [Logging](https://github.com/codeslake/IFAN/wiki/Log-Details)
@@ -171,8 +177,8 @@ All material related to our paper is available by following links:
 
 | Link |
 | :-------------- |
-| [The main paper]() |
-| [Supplementary](https://www.dropbox.com/s/6wv6ppxsaofbix6/IFAN_supp.pdf?dl=1) |
+| [The main paper](https://www.dropbox.com/s/33ix3yzqz0q7xce/IFAN_main.pdf?raw=1) |
+| [Supplementary](https://www.dropbox.com/s/6wv6ppxsaofbix6/IFAN_supp.pdf?raw=1) |
 | [Checkpoint Files](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1) |
 | [The DPDD dataset](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1) ([reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
 | [The PixelDP test set](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1) ([reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
@@ -185,9 +191,9 @@ This software is being made available under the terms in the [LICENSE](LICENSE) 
 Any exemptions to these terms require a license from the Pohang University of Science and Technology.
 
 ## About Coupe Project
-Project ‘COUPE’ aims to develop software that evaluates and improves the quality of images and videos based on big visual data. To achieve the goal, we extract sharpness, color, composition features from images and develop technologies for restoring and improving by using them. In addition, personalization technology through user reference analysis is under study.  
-    
-Please checkout other Coupe repositories in our [Posgraph](https://github.com/posgraph) github organization.
+Project ‘COUPE’ aims to develop software that evaluates and improves the quality of images and videos based on big visual data. To achieve the goal, we extract sharpness, color, composition features from images and develop technologies for restoring and improving by using them. In addition, personalization technology through user reference analysis is under study.
+
+Please check out other Coupe repositories in our [Posgraph](https://github.com/posgraph) github organization.
 
 ### Useful Links
 * [Coupe Library](http://coupe.postech.ac.kr/)

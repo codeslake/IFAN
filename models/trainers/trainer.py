@@ -112,7 +112,7 @@ class Model(baseModel):
         lr = self.config.lr_init if lr is None else lr
 
         self.optimizer = optim.RAdam([
-            {'params': self.network.parameters(), 'lr': self.config.lr_init, 'lr_init': self.config.lr_init}
+            {'params': self.network.parameters(), 'lr': self.config.lr_init, 'initial_lr': self.config.lr_init}
             ], eps= 1e-8, weight_decay=0.01, lr=lr, betas=(self.config.beta1, 0.999))
 
         self.optimizers.append(self.optimizer)
