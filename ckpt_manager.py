@@ -45,7 +45,7 @@ class CKPT_Manager:
                 file_path = os.path.join(self.root_dir_ckpt, file_name)
 
         device_id = torch.cuda.current_device()
-        return network.load_state_dict(torch.load(file_path, map_location="cuda:{}".format(device_id))), os.path.basename(file_name)
+        return network.load_state_dict(torch.load(file_path, map_location="cuda:{}".format(device_id)), strict=False), os.path.basename(file_name)
 
     def resume(self, network, resume_name, rank = -1):
         # todo

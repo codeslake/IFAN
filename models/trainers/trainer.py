@@ -44,19 +44,20 @@ class Model(baseModel):
         self.network = DeblurNet(config, lib).to(torch.device('cuda'))
 
         ## LPIPS network
-        if self.rank <= 0: print(toRed('\tinitializing LPIPS'))
-        if config.dist:
-            ## download pretrined checkpoint from 0th process
-            if self.rank <= 0:
-                self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
-            dist.barrier()
-            if self.rank > 0:
-                self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+        if self.is_train:
+            if self.rank <= 0: print(toRed('\tinitializing LPIPS'))
+            if config.dist:
+                ## download pretrined checkpoint from 0th process
+                if self.rank <= 0:
+                    self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+                dist.barrier()
+                if self.rank > 0:
+                    self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
 
-        else:
-            self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
-        for param in self.LPIPS.parameters():
-            param.requires_grad_(False)
+            else:
+                self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+            for param in self.LPIPS.parameters():
+                param.requires_grad_(False)
 
         ### INIT for training ###
         if self.is_train:
@@ -274,7 +275,7 @@ class DeblurNet(nn.Module):
         self.Network = lib.Network(config)
         if self.rank <= 0: print(toRed('\tinitializing deblurring network'))
 
-        if 'R' in config.mode or 'IFAN' in config.mode:
+        if self.config.is_train and ('R' in config.mode or 'IFAN' in config.mode):
             if self.rank <= 0: print(toRed('\tinitializing RBN'))
             self.reblurNet = reblurNet(config, self.Network.kernel_dim)
 
@@ -294,7 +295,7 @@ class DeblurNet(nn.Module):
     def init(self):
         self.Network.apply(self.weights_init)
         self.Network.init_F()
-        if 'R' in self.config.mode or 'IFAN' in self.config.mode:
+        if self.config.is_train and ('R' in config.mode or 'IFAN' in config.mode):
             self.reblurNet.apply(self.weights_init)
             self.reblurNet.init_F()
 
@@ -306,12 +307,12 @@ class DeblurNet(nn.Module):
         return {'C':C, 'R':C, 'L':C}
 
     #####################################################
-    def forward(self, C, R=None, L=None, GT=None, is_train = False):
+    def forward(self, C, R=None, L=None, GT=None, is_train=False):
         is_train = is_train or self.config.save_sample and self.config.is_train
 
         outs = self.Network(C, R, L, is_train)
 
-        if is_train  and ('R' in self.config.mode or 'IFAN' in self.config.mode):
+        if is_train and ('R' in self.config.mode or 'IFAN' in self.config.mode):
             outs_reblur = self.reblurNet(GT, outs['Filter'])
             outs.update(outs_reblur)
 

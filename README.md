@@ -1,16 +1,8 @@
 # IFAN: Iterative Filter Adaptive Network for Single Image Defocus Deblurring
-![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-blue.svg?style=plastic)
-
-***Check out for the demo ([GUI](https://YJ5YKNVB7BY5PN7Y.anvil.app/KNK4MOE27FW3VZNDQUNHAJAY)/[Google Colab](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing))!***
-<br/>*The GUI version might occasionally be offline*
-
-<!-- ***Check out for the demo in [Google Colab](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing)*** -->
-
-<p align="left">
-  <a href="https://codeslake.github.io/publications/#IFAN">
-    <img width=85% src="./assets/teaser.gif"/>
-  </a><br>
-</p>
+![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-green.svg?style=flat)
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing)
+[![License CC BY-NC](https://img.shields.io/badge/Replicate-Open_in_Replicate-blue.svg?style=flat)](https://replicate.ai/codeslake/ifan-defocus-deblur)
+[![License CC BY-NC](https://img.shields.io/badge/Anvil-Open_in_Anvil_(fastest,_but_may_be_offline)-blue.svg?style=flat)](https://YJ5YKNVB7BY5PN7Y.anvil.app/KNK4MOE27FW3VZNDQUNHAJAY)
 
 
 This repository contains the official PyTorch implementation of the following paper:
@@ -18,6 +10,12 @@ This repository contains the official PyTorch implementation of the following pa
 > **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring](https://www.dropbox.com/s/33ix3yzqz0q7xce/IFAN_main.pdf?raw=1)**<br>
 > Junyong Lee, Hyeongseok Son, Jaesung Rim, Sunghyun Cho, Seungyong Lee, CVPR 2021
 
+
+<p align="left">
+  <a href="https://codeslake.github.io/publications/#IFAN">
+    <img width=85% src="./assets/teaser.gif"/>
+  </a><br>
+</p>
 
 ## About the Research
 <details>
