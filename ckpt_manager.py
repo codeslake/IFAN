@@ -77,8 +77,11 @@ class CKPT_Manager:
                 file_name = line.split(' ')[0]
                 epoch = int(file_name.split('.')[0].split('_')[-1])
                 if epoch > epoch_to_resume:
-                    os.remove(os.path.join(self.root_dir_ckpt, file_name))
-                    os.remove(os.path.join(self.root_dir_state, file_name))
+                    try:
+                        os.remove(os.path.join(self.root_dir_ckpt, file_name))
+                        os.remove(os.path.join(self.root_dir_state, file_name))
+                    except:
+                        pass
                 elif epoch == epoch_to_resume:
                     line_recent = line
                     lines_to_add.append(line)
