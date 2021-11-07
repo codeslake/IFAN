@@ -295,7 +295,7 @@ class DeblurNet(nn.Module):
     def init(self):
         self.Network.apply(self.weights_init)
         self.Network.init_F()
-        if self.config.is_train and ('R' in config.mode or 'IFAN' in config.mode):
+        if self.config.is_train and ('R' in self.config.mode or 'IFAN' in self.config.mode):
             self.reblurNet.apply(self.weights_init)
             self.reblurNet.init_F()
 
