@@ -7,9 +7,10 @@
 
 This repo contains training and evaluation code for the following paper:
 
-> **[Iterative Filter Adaptive Network for Single Image Defocus Deblurring](https://www.dropbox.com/s/33ix3yzqz0q7xce/IFAN_main.pdf?raw=1)**<br>
+### Iterative Filter Adaptive Network for Single Image Defocus Deblurring
 > Junyong Lee, Hyeongseok Son, Jaesung Rim, Sunghyun Cho, and Seungyong Lee<br>
-> *IEEE Computer Vision and Pattern Recognition (**CVPR**) 2021*
+> *IEEE Computer Vision and Pattern Recognition (**CVPR**) 2021*<br>
+> [Paper](https://openaccess.thecvf.com/content/CVPR2021/papers/Lee_Iterative_Filter_Adaptive_Network_for_Single_Image_Defocus_Deblurring_CVPR_2021_paper.pdf) \| [arXiv](https://arxiv.org/pdf/2108.13610.pdf) \| [Supp](https://openaccess.thecvf.com/content/CVPR2021/supplemental/Lee_Iterative_Filter_Adaptive_CVPR_2021_supplemental.pdf) \| [Poster](https://www.dropbox.com/s/8kpa61f1nnv0ato/IFAN_Poster.pdf?raw=1) \| [Slide](https://www.dropbox.com/s/kpp6mxxxl5lah1n/IFAN_slides.pdf?raw=1)
 
 
 <p align="left">
@@ -87,7 +88,11 @@ $ sh install_CUDA11.1.sh
 ```
 
 #### 2. Datasets
-Download and unzip test sets (DPDD: [<i class="fab fa-google-drive"></i>](https://drive.google.com/open?id=1Mq7WtYMo9mRsJ6I6ccXdY1JJQvwBuMuQ&authuser=codeslake%40gmail.com&usp=drive_fs) | [<i class="fa-brands fa-dropbox"></i>](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1)) under `[DATASET_ROOT]`:
+Download and unzip datasets under `[DATASET_ROOT]`:
+* DPDD dataset: [Google Drive](https://drive.google.com/open?id=1Mq7WtYMo9mRsJ6I6ccXdY1JJQvwBuMuQ&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1)
+* PixelDP test set: [Google Drive](https://drive.google.com/open?id=1MuCLc1Jq7NASiVdgohHkrq5_Jtisoogj&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1)
+* CUHK test set: [Google Drive](https://drive.google.com/open?id=1Mol1GV-1NNoSX-BCRTE09Sins8LMVRyl&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1)
+* RealDOF test set: [Google Drive](https://drive.google.com/open?id=1MyizebyGPzK-VeV1pKVf7OTDl_3GmkdQ&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1)
 
 ```
 [DATASET_ROOT]
@@ -99,7 +104,7 @@ Download and unzip test sets (DPDD: [<i class="fab fa-google-drive"></i>](https:
 > `[DATASET_ROOT]` can be modified with [`config.data_offset`](https://github.com/codeslake/IFAN/blob/main/configs/config.py#L48-L49) in `./configs/config.py`.
 
 #### 3. Pre-trained models
-Download and unzip pretrained weights ([<i class="fab fa-google-drive"></i>](https://drive.google.com/open?id=1MnoyTZgHgG7vwZYuloLeQgegwa6O9A7O&authuser=codeslake%40gmail.com&usp=drive_fs) | [<i class="fa-brands fa-dropbox"></i>](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1)) under `./ckpt/`:
+Download and unzip pretrained weights ([Google Drive](https://drive.google.com/open?id=1MnoyTZgHgG7vwZYuloLeQgegwa6O9A7O&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1)) under `./ckpt/`:
 
 ```
 .
@@ -156,19 +161,6 @@ CUDA_VISIBLE_DEVICES=0 python run.py --mode IFAN_dual --network IFAN_dual --conf
 ## Contact
 Open an issue for any inquiries.
 You may also have contact with [junyonglee@postech.ac.kr](mailto:junyonglee@postech.ac.kr)
-
-## Resources
-All material related to our paper is available by following links:
-
-| Link |
-| :-------------- |
-| [The main paper](https://www.dropbox.com/s/33ix3yzqz0q7xce/IFAN_main.pdf?raw=1) |
-| [Supplementary](https://www.dropbox.com/s/6wv6ppxsaofbix6/IFAN_supp.pdf?raw=1) |
-| [Checkpoint Files](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1) |
-| [The DPDD dataset](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1) ([reference](https://github.com/Abdullah-Abuolaim/defocus-deblurring-dual-pixel)) |
-| [The PixelDP test set](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1) ([reference](https://ln2.sync.com/dl/ec54aa480/b28q2xma-9xa3w5tx-ss2cv7dg-2yx935qs/view/default/10770664900008)) |
-| [The CUHK dataset](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1) ([reference](http://www.cse.cuhk.edu.hk/~leojia/projects/dblurdetect/dataset.html)) |
-| [The RealDOF test set](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1) |
 
 ## License
 This software is being made available under the terms in the [LICENSE](LICENSE) file.
