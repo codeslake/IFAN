@@ -87,7 +87,7 @@ $ sh install_CUDA11.1.sh
 ```
 
 #### 2. Datasets
-Download and unzip test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1)) under `[DATASET_ROOT]`:
+Download and unzip test sets (DPDD: [<i class="fab fa-google-drive"></i>](https://drive.google.com/open?id=1Mq7WtYMo9mRsJ6I6ccXdY1JJQvwBuMuQ&authuser=codeslake%40gmail.com&usp=drive_fs) | [<i class="fa-brands fa-dropbox"></i>](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1), [PixelDP](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1), [CUHK](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1) and [RealDOF](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1)) under `[DATASET_ROOT]`:
 
 ```
 [DATASET_ROOT]
@@ -99,7 +99,7 @@ Download and unzip test sets ([DPDD](https://www.dropbox.com/s/w9urn5m4mzllrwu/D
 > `[DATASET_ROOT]` can be modified with [`config.data_offset`](https://github.com/codeslake/IFAN/blob/main/configs/config.py#L48-L49) in `./configs/config.py`.
 
 #### 3. Pre-trained models
-Download and unzip [pretrained weights](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1) under `./ckpt/`:
+Download and unzip pretrained weights ([<i class="fab fa-google-drive"></i>](https://drive.google.com/open?id=1MnoyTZgHgG7vwZYuloLeQgegwa6O9A7O&authuser=codeslake%40gmail.com&usp=drive_fs) | [<i class="fa-brands fa-dropbox"></i>](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1)) under `./ckpt/`:
 
 ```
 .
