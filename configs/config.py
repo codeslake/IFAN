@@ -14,6 +14,7 @@ def get_config(project = '', mode = '', config_ = ''):
     config.thread_num = 8
     config.dist = False
     config.resume = None # 'resume epoch'
+    config.resume_abs = None # 'resume abs name'
     config.manual_seed = 0
     config.is_verbose = False
     config.save_sample = False

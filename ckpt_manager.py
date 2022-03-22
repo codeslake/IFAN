@@ -47,18 +47,30 @@ class CKPT_Manager:
         device_id = torch.cuda.current_device()
         return network.load_state_dict(torch.load(file_path, map_location="cuda:{}".format(device_id)), strict=False), os.path.basename(file_name)
 
-    def resume(self, network, resume_name, rank = -1):
+    def resume(self, network, resume_name=None, resume_abs=None, rank = -1):
         # todo
         # according to the resume_name,
 
         # 2. load ckpt
-        resume_name = self.model_name + '_' + '{:05d}'.format(int(resume_name)) + '.pytorch'
-        result, _ = self.load_ckpt(network, name = resume_name)
-        print('Rank[{}]: '.format(rank), result)
+        if resume_name is not None:
+            resume_name = self.model_name + '_' + '{:05d}'.format(int(resume_name)) + '.pytorch'
+            ckpt_dir = os.path.join(self.root_dir_ckpt, resume_name)
+            state_dir = os.path.join(self.root_dir_state, resume_name)
+        elif resume_abs is not None:
+            ckpt_dir = resume_abs
+            # path = Path(resume_abs)
+            # root_dir_state = path.parent.parent.absolute()
+            # state_dir = os.path.join(root_dir_state, 'state', path.name)
+            result, _ = self.load_ckpt(network, abs_name=ckpt_dir)
+            print('Rank[{}] resume ckpt loading: '.format(rank), result)
+            return None
+
+        result, _ = self.load_ckpt(network, name=ckpt_dir)
+        print('Rank[{}] resume ckpt loading: '.format(rank), result)
 
         # 3. load state
         device_id = torch.cuda.current_device()
-        file_name = os.path.join(self.root_dir_state, resume_name)
+        file_name = state_dir
         # resume_state = torch.load(file_name, map_location=lambda storage, loc: storage.cuda(device_id))
         resume_state = torch.load(file_name, map_location="cuda:{}".format(device_id))
 
@@ -78,8 +90,8 @@ class CKPT_Manager:
                 epoch = int(file_name.split('.')[0].split('_')[-1])
                 if epoch > epoch_to_resume:
                     try:
-                        os.remove(os.path.join(self.root_dir_ckpt, file_name))
-                        os.remove(os.path.join(self.root_dir_state, file_name))
+                        os.remove(ckpt_dir)
+                        os.remove(state_dir)
                     except:
                         pass
                 elif epoch == epoch_to_resume:

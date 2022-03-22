@@ -52,12 +52,13 @@ class Trainer():
 
         if self.config.resume is not None:
             if self.rank <= 0: print(toGreen('Resume Trianing...'))
-            if self.rank <= 0: print(toRed('\tResuming {}..'.format(self.config.resume)))
-            resume_state = self.ckpt_manager.resume(self.model.get_network(), self.config.resume, self.rank)
+            if self.rank <= 0: print(toRed('\tResuming {}..'.format(self.config.resume if self.config.resume is not None else self.config.resume_abs)))
+            resume_state = self.ckpt_manager.resume(self.model.get_network(), self.config.resume, self.config.resume_abs, self.rank)
             # if 'resume' in self.config.mode:
             #     self.max_epoch = 5666
-            self.epoch_range = np.arange(resume_state['epoch'] + 1, self.max_epoch + 1)
-            self.model.resume_training(resume_state)
+            if self.config.resume is not None:
+                self.epoch_range = np.arange(resume_state['epoch'] + 1, self.max_epoch + 1)
+                self.model.resume_training(resume_state)
 
 
     def train(self):
@@ -218,6 +219,7 @@ if __name__ == '__main__':
         parser.add_argument('-trainer', '--trainer', type = str, default = 'trainer', help = 'model name')
         parser.add_argument('-net', '--network', type = str, default = 'IFAN', help = 'network name')
         parser.add_argument('-r', '--resume', type = str, default = config.resume, help = 'name of state or ckpt (names are the same)')
+        parser.add_argument('-ra', '--resume_abs', type = str, default = config.resume_abs, help = 'absolute path of state or ckpt')
         parser.add_argument('-dl', '--delete_log', action = 'store_true', default = False, help = 'whether to delete log')
         parser.add_argument('-lr', '--lr_init', type = float, default = config.lr_init, help = 'leraning rate')
         parser.add_argument('-b', '--batch_size', type = int, default = config.batch_size, help = 'number of batch')
@@ -239,6 +241,7 @@ if __name__ == '__main__':
         config.network = args.network
 
         config.resume = args.resume
+        config.resume_abs = args.resume_abs
         config.delete_log = False if config.resume is not None else args.delete_log
         config.lr_init = args.lr_init
         config.batch_size = args.batch_size

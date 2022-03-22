@@ -1,69 +1,18 @@
-# IFAN: Iterative Filter Adaptive Network for Single Image Defocus Deblurring<br><sub>Official PyTorch Implementation of the CVPR 2021 Paper</sub>
-![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-green.svg?style=flat)
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing)
-[![License CC BY-NC](https://img.shields.io/badge/Replicate-Open_in_Replicate-blue.svg?style=flat)](https://replicate.ai/codeslake/ifan-defocus-deblur)
-[![License CC BY-NC](https://img.shields.io/badge/Anvil-Open_in_Anvil_(fastest,_but_may_be_offline)-blue.svg?style=flat)](https://YJ5YKNVB7BY5PN7Y.anvil.app/KNK4MOE27FW3VZNDQUNHAJAY)
-
+## IFAN: Iterative Filter Adaptive Network for Single Image Defocus Deblurring<br><sub>Official PyTorch Implementation of the CVPR 2021 Paper</sub><br><sub>[Project](https://junyonglee.me/projects/IFAN) | [Paper](https://openaccess.thecvf.com/content/CVPR2021/papers/Lee_Iterative_Filter_Adaptive_Network_for_Single_Image_Defocus_Deblurring_CVPR_2021_paper.pdf) | [arXiv](https://arxiv.org/pdf/2108.13610.pdf) | [Supp](https://openaccess.thecvf.com/content/CVPR2021/supplemental/Lee_Iterative_Filter_Adaptive_CVPR_2021_supplemental.pdf) | [Poster](https://www.dropbox.com/s/8kpa61f1nnv0ato/IFAN_Poster.pdf?raw=1) | [Slide](https://www.dropbox.com/s/kpp6mxxxl5lah1n/IFAN_slides.pdf?raw=1)</sub><br><sub><sub>[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1DmazbJPUlx4MF9-Z9llvddlywxlLWxsX?usp=sharing) [![License CC BY-NC](https://img.shields.io/badge/Replicate-Open_in_Replicate-blue.svg?style=flat)](https://replicate.ai/codeslake/ifan-defocus-deblur) [![License CC BY-NC](https://img.shields.io/badge/Anvil-Open_in_Anvil_(fastest,_but_may_be_offline)-blue.svg?style=flat)](https://YJ5YKNVB7BY5PN7Y.anvil.app/KNK4MOE27FW3VZNDQUNHAJAY)</sub></sub>
 
 This repo contains training and evaluation code for the following paper:
 
-### Iterative Filter Adaptive Network for Single Image Defocus Deblurring
-> Junyong Lee, Hyeongseok Son, Jaesung Rim, Sunghyun Cho, and Seungyong Lee<br>
+> [**Iterative Filter Adaptive Network for Single Image Defocus Deblurring**](https://junyonglee.me/projects/IFAN)<br>
+> [Junyong Lee](https://junyonglee.me), [Hyeongseok Son](https://sites.google.com/site/sonhspostech/), [Jaesung Rim](https://github.com/rimchang), [Sunghyun Cho](https://www.scho.pe.kr/), and [Seungyong Lee](http://cg.postech.ac.kr/leesy/)<br>
+>  POSTECH <br>
 > *IEEE Computer Vision and Pattern Recognition (**CVPR**) 2021*<br>
-> [Paper](https://openaccess.thecvf.com/content/CVPR2021/papers/Lee_Iterative_Filter_Adaptive_Network_for_Single_Image_Defocus_Deblurring_CVPR_2021_paper.pdf) \| [arXiv](https://arxiv.org/pdf/2108.13610.pdf) \| [Supp](https://openaccess.thecvf.com/content/CVPR2021/supplemental/Lee_Iterative_Filter_Adaptive_CVPR_2021_supplemental.pdf) \| [Poster](https://www.dropbox.com/s/8kpa61f1nnv0ato/IFAN_Poster.pdf?raw=1) \| [Slide](https://www.dropbox.com/s/kpp6mxxxl5lah1n/IFAN_slides.pdf?raw=1)
 
 
 <p align="left">
-  <a href="https://codeslake.github.io/publications/#IFAN">
+  <a href="https://junyonglee.me/#IFAN">
     <img width=85% src="./assets/teaser.gif"/>
   </a><br>
 </p>
-
-## About the Research
-<details>
-    <summary><i>Click here</i></summary>
-        <h2> Iterative Filter Adaptive Network (IFAN) </h2>
-        <p align="center">
-          <img width=95% src="./assets/IFAN_network.jpg" />
-        </p>
-        <p> Our deblurring network is built upon a simple encoder-decoder architecture consisting of a feature extractor, reconstructor, and IFAN module in the middle. The feature extractor extracts defocused features and feeds them to IFAN. IFAN removes blur in the feature domain by predicting spatially-varying deblurring filters and applying them to the defocused features using IAC. The deblurred features from IFAN is then passed to the reconstructor, which restores an all-in-focus image.
-        </p>
-        <h3> Iterative Adaptive Convolution Layer </h3>
-        <p> The IAC layer iteratively computes feature maps <img src="https://latex.codecogs.com/svg.latex?\hat{e}^n" /> as follows (refer Eq. 1 in the main paper): </p>
-        <p align="center">
-            <img src="./assets/IAC_eq.svg" />
-        </p>
-        <p align="center">
-            <img width=80% src="./assets/IAC.jpg" />
-        </p>
-        <p>
-            Separable filters in our IAC layer play a key role in resolving the limitation of <a href="https://jiaya.me/papers/inversekernel_eccv14.pdf">the FAC layer</a>. Our IAC layer secures larger receptive fields at much lower memory and computational costs than the FAC layer by utilizing 1-dim filters, instead of 2-dim convolutions. However, compared to dense 2-dim convolution filters in the FAC layer, our separable filters may not provide enough accuracy for deblurring filters. We handle this problem by iteratively applying separable filters to fully exploit the non-linear nature of a deep network. Our iterative scheme also enables small-sized separable filters to be used for establishing large receptive fields.
-        </p>
-        <h3> Disparity Map Estimation & Reblurring </h3>
-        <p> To further improve the single image deblurring quality, we train our network with novel defocus-specific tasks: defocus disparity estimation and reblurring. </p>
-        <p align="center">
-            <img width=50% src="./assets/DME.jpg" />
-        </p>
-        <p>
-            <b>Disparity Map Estimation</b> exploits dual-pixel data, which provides stereo images with a tiny baseline, whose disparities are proportional to defocus blur magnitudes.
-            Leveraging dual-pixel stereo images, we train IFAN to predict the disparity map from a single image so that it can also learn to more accurately predict blur magnitudes.
-        </p>
-        <p align="center">
-            <img width=50% src="./assets/RBN.jpg" />
-        </p>
-        <p>
-            <b>Reblurring</b>, motivated by <a href="https://arxiv.org/pdf/1801.05117v1.pdf">the reblur-to-deblur scheme</a>, utilizes deblurring filters predicted by IFAN for reblurring all-in-focus images.
-            For accurate reblurring, IFAN needs to predict deblurring filters that contain accurate information about the shapes and sizes of defocus blur.
-            Based on this, during training, we introduce an additional network that inverts predicted deblurring filters to reblurring filters, and reblurs an all-in-focus image.
-        </p>
-        <h2> The Real Depth of Field (RealDOF) test set </h2>
-        <p align="center">
-            <img width=50% src="./assets/dual-camera-system.jpg" />
-        </p>
-        <p>
-            We present the <a href="https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1">Real Depth of Field (RealDOF) test set</a> for quantitative and qualitative evaluations of single image defocus deblurring. Our RealDOF test set contains 50 image pairs, each of which consists of a defocused image and its corresponding all-in-focus image that have been concurrently captured for the same scene, with the dual-camera system. Refer Sec. 1 in the supplementary material for more details.
-        </p>
-</details>
 
 ## Getting Started
 ### Prerequisites
@@ -163,20 +112,19 @@ Open an issue for any inquiries.
 You may also have contact with [junyonglee@postech.ac.kr](mailto:junyonglee@postech.ac.kr)
 
 ## License
+![License CC BY-NC](https://img.shields.io/badge/license-GNU_AGPv3-green.svg?style=flat)<br>
 This software is being made available under the terms in the [LICENSE](LICENSE) file.
-
 Any exemptions to these terms require a license from the Pohang University of Science and Technology.
 
 ## Citation
 If you find this code useful, please consider citing:
 
 ```
-@InProceedings{Lee_2021_CVPR,
-    author = {Lee, Junyong and Son, Hyeongseok and Rim, Jaesung and Cho, Sunghyun and Lee, Seungyong},
-    title = {Iterative Filter Adaptive Network for Single Image Defocus Deblurring},
-    booktitle = {IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-    month = {June},
-    year = {2021}
+@InProceedings{Lee2021IFAN,
+    author    = {Junyong Lee and Hyeongseok Son and Jaesung Rim and Sunghyun Cho and Seungyong Lee},
+    title     = {Iterative Filter Adaptive Network for Single Image Defocus Deblurring},
+    booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+    year      = {2021}
 }
 ```
 
