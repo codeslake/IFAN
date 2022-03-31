@@ -45,6 +45,9 @@ class Model(baseModel):
 
         ## LPIPS network
         if self.is_train:
+            if self.config.is_amp:
+                self.scaler = torch.cuda.amp.GradScaler()
+
             if self.rank <= 0: print(toRed('\tinitializing LPIPS'))
             if config.dist:
                 ## download pretrined checkpoint from 0th process
@@ -163,6 +166,19 @@ class Model(baseModel):
 
         return lr
 
+    def _update_amp(self, errs, warmup_itr = -1):
+        lr = None
+        self.optimizer.zero_grad(set_to_none=True)
+        self.scaler.scale(errs['total']).backward()
+
+        self.scaler.unscale_(self.optimizer)
+        torch_utils.clip_grad_norm_(self.network.parameters(), self.config.gc)
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+        lr = self._update_learning_rate(self.itr_global['train'], warmup_itr)
+
+        return lr
+
     ########################### Edit from here for training/testing scheme ###############################
     def _set_results(self, inputs, outs, errs, lr, norm=1):
 
@@ -197,7 +213,11 @@ class Model(baseModel):
             L = L if is_train or self.config.save_sample else None
             R = R if is_train or self.config.save_sample else None
 
-        outs = self.network(C, R, L, GT, is_train=is_train)
+        if self.config.is_amp:
+            with torch.cuda.amp.autocast():
+                outs = self.network(C, R, L, GT, is_train=is_train)
+        else:
+            outs = self.network(C, R, L, GT, is_train=is_train)
 
         ## loss
         if self.config.is_train:
@@ -253,7 +273,10 @@ class Model(baseModel):
 
         # run network / get results and losses / update network, get learning rate
         errs, outs = self._get_results(C, R, L, GT, is_train)
-        lr = self._update(errs, self.config.warmup_itr) if is_train else None
+        if self.config.is_amp:
+            lr = self._update_amp(errs, self.config.warmup_itr) if is_train else None
+        else:
+            lr = self._update(errs, self.config.warmup_itr) if is_train else None
 
 
         # set results for the log

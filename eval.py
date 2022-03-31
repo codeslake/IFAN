@@ -118,11 +118,21 @@ def eval_quan_qual(config):
         time_norm = time_norm + 1
         with torch.no_grad():
             if 'dual' not in config.mode:
+                torch.cuda.synchronize()
                 init_time = time.time()
-                out = network(C, is_train=False)
+                if config.is_amp:
+                    with torch.cuda.amp.autocast():
+                        out = network(C, is_train=False)
+                else:
+                    out = network(C, is_train=False)
             else:
                 init_time = time.time()
-                out = network(C, R, L, is_train=False)
+                if config.is_amp:
+                    with torch.cuda.amp.autocast():
+                        out = network(C, R, L, is_train=False)
+                else:
+                    out = network(C, R, L, is_train=False)
+            torch.cuda.synchronize()
             itr_time = time.time() - init_time
             total_itr_time = total_itr_time + itr_time
 
