@@ -9,7 +9,7 @@ This repo contains training and evaluation code for the following paper:
 
 
 <p align="left">
-  <a href="https://junyonglee.me/#IFAN">
+  <a href="https://junyonglee.me/projects/IFAN">
     <img width=85% src="./assets/teaser.gif"/>
   </a><br>
 </p>
@@ -21,7 +21,7 @@ This repo contains training and evaluation code for the following paper:
 
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-16.0.4%20&%2018.0.4-blue.svg?style=plastic)
 ![Python](https://img.shields.io/badge/Python-3.8.8-green.svg?style=plastic)
-![PyTorch](https://img.shields.io/badge/PyTorch-1.7.1%20&%201.8.0%20&%201.9.0-%20&%201.10.2-green.svg?style=plastic)
+![PyTorch](https://img.shields.io/badge/PyTorch-1.7.1%20&%201.8.0%20&%201.9.0%20&%201.10.2%20&%201.11.0-green.svg?style=plastic)
 ![CUDA](https://img.shields.io/badge/CUDA-10.2%20&%2011.1%20&%2011.3-green.svg?style=plastic)
 
 #### 1. Environment setup
