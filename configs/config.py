@@ -64,8 +64,8 @@ def get_config(project = '', mode = '', config_ = ''):
 
     # log dirs
     config.LOG_DIR = edict()
-    log_offset = './logs'
-    # log_offset = '/Jarvis/logs/junyonglee'
+    # log_offset = './logs'
+    log_offset = '/Bean/logs/junyonglee'
     log_offset = os.path.join(log_offset, config.project)
     log_offset = os.path.join(log_offset, '{}'.format(mode))
     config.LOG_DIR.offset = log_offset
@@ -109,7 +109,8 @@ def get_config(project = '', mode = '', config_ = ''):
 
     # log dir
     config.EVAL.LOG_DIR = edict()
-    config.EVAL.LOG_DIR.save = os.path.join(config.LOG_DIR.offset, 'result')
+    config.output_offset = os.path.join(config.LOG_DIR.offset, 'result')
+    config.EVAL.LOG_DIR.save = config.output_offset
 
     return config
 

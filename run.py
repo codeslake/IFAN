@@ -310,6 +310,8 @@ if __name__ == '__main__':
         config.is_train = False
         ## EVAL
         parser.add_argument('-net', '--network', type = str, default = config.network, help = 'network name')
+        parser.add_argument('-data_offset', '--data_offset', type = str, default = config.data_offset, help = 'root path of the dataset')
+        parser.add_argument('-output_offset', '--output_offset', type = str, default = config.output_offset, help = 'root path of the outputs')
         parser.add_argument('-ckpt_name', '--ckpt_name', type=str, default = None, help='ckpt name')
         parser.add_argument('-ckpt_abs_name', '--ckpt_abs_name', type=str, default = None, help='ckpt abs name')
         parser.add_argument('-ckpt_epoch', '--ckpt_epoch', type=int, default = None, help='ckpt epoch')
@@ -328,6 +330,9 @@ if __name__ == '__main__':
         config.dist = args.dist
         config.EVAL.eval_mode = args.eval_mode
         config.EVAL.data = args.data
+
+        config.data_offset = args.data_offset
+        config.EVAL.LOG_DIR.save = os.path.join(args.output_offset, 'hi')
         config = set_eval_path(config, config.EVAL.data)
 
         print(toRed('\tProject : {}'.format(config.project)))
