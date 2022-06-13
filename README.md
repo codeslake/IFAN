@@ -91,11 +91,11 @@ CUDA_VISIBLE_DEVICES=0 python run.py --mode IFAN_44 --network IFAN --config conf
 
 ## Table 1 in the supplementary material
 # Our model trained with 16 bit images
-CUDA_VISIBLE_DEVICES=0 python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --data DPDD --ckpt_abs_name ckpt/IFAN_16bit.pytorch
+CUDA_VISIBLE_DEVICES=0 python run.py --mode IFAN_16bit --network IFAN --config config_IFAN_16bit --data DPDD --ckpt_abs_name ckpt/IFAN_16bit.pytorch --data_offset /data_offset --output_offset ./output
 
 ## Table 2 in the supplementary material
 # Our model taking dual-pixel stereo images as an input
-CUDA_VISIBLE_DEVICES=0 python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --data DPDD --ckpt_abs_name ckpt/IFAN_dual.pytorch
+CUDA_VISIBLE_DEVICES=0 python run.py --mode IFAN_dual --network IFAN_dual --config config_IFAN --data DPDD --ckpt_abs_name ckpt/IFAN_dual.pytorch --data_offset /data_offset --output_offset ./output
 ```
 
 > Testing results will be saved in `[LOG_ROOT]/IFAN_CVPR2021/[mode]/result/quanti_quali/[mode]_[epoch]/[data]/`.
