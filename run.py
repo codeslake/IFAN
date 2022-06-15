@@ -346,7 +346,7 @@ if __name__ == '__main__':
         config.EVAL.data = args.data
 
         config.data_offset = args.data_offset
-        config.EVAL.LOG_DIR.save = os.path.join(args.output_offset, 'hi')
+        config.EVAL.LOG_DIR.save = os.path.join(args.output_offset)
         config = set_eval_path(config, config.EVAL.data)
 
         print(toRed('\tProject : {}'.format(config.project)))

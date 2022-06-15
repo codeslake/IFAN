@@ -83,15 +83,13 @@ def load_file_list(root_path, child_path = None, is_flatten = False):
     filenames_structured = []
     num_files = 0
     for root, dirnames, filenames in os.walk(root_path):
-        # print('root: ', root)
-        # print('dirnames: ', dirnames)
-        # print('filenames: ', filenames)
+        # print('Root:', root, ', dirnames:', dirnames, ', filenames', filenames)
         if len(dirnames) != 0:
             if dirnames[0][0] == '@':
                 del(dirnames[0])
 
         if len(dirnames) == 0:
-            if root[0] == '.':
+            if root == '.':
                 continue
             if child_path is not None and child_path != Path(root).name:
                 continue
@@ -100,7 +98,7 @@ def load_file_list(root_path, child_path = None, is_flatten = False):
             for i in np.arange(len(filenames)):
                 if filenames[i][0] != '.' and filenames[i] != 'Thumbs.db':
                     filenames_pure.append(os.path.join(root, filenames[i]))
-            filenames_pure
+            # print('filenames_pure:', filenames_pure)
             filenames_structured.append(np.array(sorted(filenames_pure), dtype='str'))
             num_files += len(filenames_pure)
 
