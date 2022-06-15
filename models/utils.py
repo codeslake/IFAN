@@ -33,13 +33,13 @@ def get_psnr2(img1, img2, PIXEL_MAX=1.0):
 
 Backward_tensorGrid = {}
 DPD_zero = {}
-def DPD(tensorInput, tensorFlow, padding_mode = 'zeros'):
+def DPD(tensorInput, tensorFlow, padding_mode = 'zeros', device='cuda'):
     if str(tensorFlow.size()) not in Backward_tensorGrid:
-        DPD_zero[str(tensorFlow.size())] = torch.zeros_like(tensorFlow[:, 0:1, :, :]).to(torch.device('cuda'))
+        DPD_zero[str(tensorFlow.size())] = torch.zeros_like(tensorFlow[:, 0:1, :, :]).to(device)
         tensorHorizontal = torch.linspace(-1.0, 1.0, tensorFlow.size(3)).view(1, 1, 1, tensorFlow.size(3)).expand(tensorFlow.size(0), -1, tensorFlow.size(2), -1)
         tensorVertical = torch.linspace(-1.0, 1.0, tensorFlow.size(2)).view(1, 1, tensorFlow.size(2), 1).expand(tensorFlow.size(0), -1, -1, tensorFlow.size(3))
 
-        Backward_tensorGrid[str(tensorFlow.size())] = torch.cat([ tensorHorizontal, tensorVertical ], 1).to(torch.device('cuda'))
+        Backward_tensorGrid[str(tensorFlow.size())] = torch.cat([ tensorHorizontal, tensorVertical ], 1).to(device)
 
     DPDM = torch.cat([ tensorFlow[:, 0:1, :, :] / ((tensorInput.size(3) - 1.0) / 2.0),  DPD_zero[str(tensorFlow.size())]], 1)
     return torch.nn.functional.grid_sample(input=tensorInput, grid=(Backward_tensorGrid[str(tensorFlow.size())] + DPDM).permute(0, 2, 3, 1), mode='bilinear', padding_mode=padding_mode, align_corners = True)

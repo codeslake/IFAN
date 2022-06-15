@@ -15,6 +15,7 @@ class Network(nn.Module):
         except Exception as ex:
             self.rank = 0
 
+        self.device = config.device
         ks = config.ks
         self.Fs = config.Fs
         res_num = config.res_num
@@ -176,7 +177,7 @@ class Network(nn.Module):
             f = self.kconv3_3(self.kconv3_2(self.kconv3_1(f)))
             f = self.kconv4_3(self.kconv4_2(self.kconv4_1(f)))
             DM = self.DME(f)
-            f_R_warped = DPD(Func.interpolate(R, scale_factor=1/8, mode='area'), DM, padding_mode = 'zeros')
+            f_R_warped = DPD(Func.interpolate(R, scale_factor=1/8, mode='area'), DM, padding_mode = 'zeros', device = self.device)
             outs['f_R_w'] = f_R_warped
             outs['f_L'] = Func.interpolate(L, scale_factor=1/8, mode='area')
 

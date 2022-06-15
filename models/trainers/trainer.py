@@ -33,6 +33,7 @@ class Model(baseModel):
         super(Model, self).__init__(config)
         self.rank = torch.distributed.get_rank() if config.dist else -1
         self.ws = torch.distributed.get_world_size() if config.dist else 1
+        self.device = config.device
 
         ### NETWORKS ###
         ## main network
@@ -41,7 +42,7 @@ class Model(baseModel):
             copy2('./models/archs/{}.py'.format(config.network), self.config.LOG_DIR.offset)
 
         if self.rank <= 0 : print(toGreen('Loading Model...'))
-        self.network = DeblurNet(config, lib).to(torch.device('cuda'))
+        self.network = DeblurNet(config, lib).to(self.device)
 
         ## LPIPS network
         if self.is_train:
@@ -49,16 +50,20 @@ class Model(baseModel):
                 self.scaler = torch.cuda.amp.GradScaler()
 
             if self.rank <= 0: print(toRed('\tinitializing LPIPS'))
-            if config.dist:
-                ## download pretrined checkpoint from 0th process
-                if self.rank <= 0:
-                    self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
-                dist.barrier()
-                if self.rank > 0:
-                    self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+            if config.cuda:
+                if config.dist:
+                    ## download pretrined checkpoint from 0th process
+                    if self.rank <= 0:
+                        self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+                    dist.barrier()
+                    if self.rank > 0:
+                        self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
 
+                else:
+                    self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
             else:
-                self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', gpu_ids = [torch.cuda.current_device()]).to(torch.device('cuda'))
+                self.LPIPS = LPIPS.PerceptualLoss(model='net-lin',net='alex', use_gpu=False).to(self.device)
+
             for param in self.LPIPS.parameters():
                 param.requires_grad_(False)
 
@@ -81,21 +86,22 @@ class Model(baseModel):
                 Macs,params = get_model_complexity_info(self.network.Network, (1, 3, 720, 1280), input_constructor = self.network.input_constructor, as_strings=False,print_per_layer_stat=config.is_verbose)
 
         ### DDP ###
-        if config.dist:
-            if self.rank <= 0: print(toGreen('Building Dist Parallel Model...'))
-            self.network = DDP(self.network, device_ids=[torch.cuda.current_device()], output_device=torch.cuda.current_device(), broadcast_buffers=True, find_unused_parameters=False)
-        else:
-            self.network = DP(self.network).to(torch.device('cuda'))
+        if config.cuda:
+            if config.dist:
+                if self.rank <= 0: print(toGreen('Building Dist Parallel Model...'))
+                self.network = DDP(self.network, device_ids=[torch.cuda.current_device()], output_device=torch.cuda.current_device(), broadcast_buffers=True, find_unused_parameters=False)
+            else:
+                self.network = DP(self.network).to(torch.device('cuda'))
 
-        if self.rank <= 0:
-            print(toGreen('Computing model complexity...'))
-            print(toRed('\t{:<30}  {:<8} B'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 )))
-            print(toRed('\t{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2, '\n')))
-            if self.is_train:
-                with open(config.LOG_DIR.offset + '/cost.txt', 'w') as f:
-                    f.write('{:<30}  {:<8} B\n'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 ))
-                    f.write('{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2))
-                    f.close()
+            if self.rank <= 0:
+                print(toGreen('Computing model complexity...'))
+                print(toRed('\t{:<30}  {:<8} B'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 )))
+                print(toRed('\t{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2, '\n')))
+                if self.is_train:
+                    with open(config.LOG_DIR.offset + '/cost.txt', 'w') as f:
+                        f.write('{:<30}  {:<8} B\n'.format('Computational complexity (Macs): ', Macs / 1000 ** 3 ))
+                        f.write('{:<30}  {:<8} M'.format('Number of parameters: ',params / 1000 ** 2))
+                        f.close()
 
     def get_itr_per_epoch(self, state):
         if state == 'train':
@@ -105,10 +111,10 @@ class Model(baseModel):
 
     def _set_loss(self, lr = None):
         if self.rank <= 0: print(toGreen('Building Loss...'))
-        self.MSE = torch.nn.MSELoss().to(torch.device('cuda'))
-        self.MAE = torch.nn.L1Loss().to(torch.device('cuda'))
-        self.CSE = torch.nn.CrossEntropyLoss(reduction='none').to(torch.device('cuda'))
-        self.MSE_sum = torch.nn.MSELoss(reduction = 'sum').to(torch.device('cuda'))
+        self.MSE = torch.nn.MSELoss().to(self.device)
+        self.MAE = torch.nn.L1Loss().to(self.device)
+        self.CSE = torch.nn.CrossEntropyLoss(reduction='none').to(self.device)
+        self.MSE_sum = torch.nn.MSELoss(reduction = 'sum').to(self.device)
 
     def _set_optim(self, lr = None):
         if self.rank <= 0: print(toGreen('Building Optim...'))
@@ -234,7 +240,7 @@ class Model(baseModel):
                     dist = self.LPIPS.forward(outs['result'] * 2. - 1., GT * 2. - 1.) #imge range [-1, 1]
                     with torch.no_grad():
                         errs['LPIPS'] = torch.mean(dist) # flow log
-                    errs['LPIPS_MSE'] = 1e-1 * self.MSE(torch.zeros_like(dist).to(torch.device('cuda')), dist)
+                    errs['LPIPS_MSE'] = 1e-1 * self.MSE(torch.zeros_like(dist).to(self.device), dist)
                     errs['total'] = errs['total'] + errs['LPIPS_MSE']
 
                 if ('D' in self.config.mode or 'IFAN' in self.config.mode) and 'f_R_w' in outs.keys():
@@ -261,10 +267,10 @@ class Model(baseModel):
         self.itr_global[state] += self.itr_inc[state]
 
         # dataloader / loading data / mod crop
-        inputs['c'] = refine_image_pt(inputs['c'].to(torch.device('cuda')), self.config.refine_val)
-        inputs['r'] = refine_image_pt(inputs['r'].to(torch.device('cuda')), self.config.refine_val)
-        inputs['l'] = refine_image_pt(inputs['l'].to(torch.device('cuda')), self.config.refine_val)
-        inputs['gt'] = refine_image_pt(inputs['gt'].to(torch.device('cuda')), self.config.refine_val)
+        inputs['c'] = refine_image_pt(inputs['c'].to(self.device), self.config.refine_val)
+        inputs['r'] = refine_image_pt(inputs['r'].to(self.device), self.config.refine_val)
+        inputs['l'] = refine_image_pt(inputs['l'].to(self.device), self.config.refine_val)
+        inputs['gt'] = refine_image_pt(inputs['gt'].to(self.device), self.config.refine_val)
 
         C = inputs['c']
         R = inputs['r']
@@ -295,6 +301,7 @@ class DeblurNet(nn.Module):
         self.rank = torch.distributed.get_rank() if config.dist else -1
 
         self.config = config
+        self.device = config.device
         self.Network = lib.Network(config)
         if self.rank <= 0: print(toRed('\tinitializing deblurring network'))
 
@@ -325,7 +332,7 @@ class DeblurNet(nn.Module):
     def input_constructor(self, res):
         b, c, h, w = res[:]
 
-        C = torch.FloatTensor(np.random.randn(b, c, h, w)).cuda()
+        C = torch.FloatTensor(np.random.randn(b, c, h, w)).to(self.device)
 
         return {'C':C, 'R':C, 'L':C}
 

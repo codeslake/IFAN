@@ -44,7 +44,7 @@ def init(config, mode = 'deblur'):
     model = create_model(config)
     network = model.get_network().eval()
 
-    ckpt_manager = CKPT_Manager(config.LOG_DIR.ckpt, config.mode, config.max_ckpt_num)
+    ckpt_manager = CKPT_Manager(config.LOG_DIR.ckpt, config.mode, config.cuda, config.max_ckpt_num)
     load_state, ckpt_name = ckpt_manager.load_ckpt(network, by_score = config.EVAL.load_ckpt_by_score, name = config.EVAL.ckpt_name, abs_name = config.EVAL.ckpt_abs_name, epoch = config.EVAL.ckpt_epoch)
     print('\nLoading checkpoint \'{}\' on model \'{}\': {}'.format(ckpt_name, config.mode, load_state))
 
@@ -86,7 +86,7 @@ def eval_quan_qual(config):
     SSIM_mean = 0.
     MAE_mean = 0.
     LPIPS_mean = 0.
-    LPIPSN = LPIPS.PerceptualLoss(model='net-lin',net='alex').to(torch.device('cuda'))
+    LPIPSN = LPIPS.PerceptualLoss(model='net-lin',net='alex', use_gpu=config.cuda).to(config.device)
     ##
 
     print(toYellow('\n\n=========== EVALUATION START ============'))
@@ -100,19 +100,19 @@ def eval_quan_qual(config):
 
         # Read image
         C = refine_image(read_frame(input_c_file_path_list[i], config.norm_val, rotate), refine_val)
-        C = torch.FloatTensor(C.transpose(0, 3, 1, 2).copy()).cuda()
+        C = torch.FloatTensor(C.transpose(0, 3, 1, 2).copy()).to(config.device)
 
         if input_l_file_path_list is not None:
             L = refine_image(read_frame(input_l_file_path_list[i], config.norm_val, rotate), refine_val)
-            L = torch.FloatTensor(L.transpose(0, 3, 1, 2).copy()).cuda()
+            L = torch.FloatTensor(L.transpose(0, 3, 1, 2).copy()).to(config.device)
 
         if input_r_file_path_list is not None:
             R = refine_image(read_frame(input_r_file_path_list[i], config.norm_val, rotate), refine_val)
-            R = torch.FloatTensor(R.transpose(0, 3, 1, 2).copy()).cuda()
+            R = torch.FloatTensor(R.transpose(0, 3, 1, 2).copy()).to(config.device)
 
         if gt_file_path_list is not None:
             GT = refine_image(read_frame(gt_file_path_list[i], config.norm_val, rotate), refine_val)
-            GT = torch.FloatTensor(GT.transpose(0, 3, 1, 2).copy()).cuda()
+            GT = torch.FloatTensor(GT.transpose(0, 3, 1, 2).copy()).to(config.device)
 
         # Run network
         time_norm = time_norm + 1

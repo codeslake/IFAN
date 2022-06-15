@@ -31,6 +31,7 @@ class Trainer():
             self.pg = dist.new_group(range(dist.get_world_size()))
 
         self.config = config
+        self.device = config.device
         if self.rank <= 0: self.summary = SummaryWriter(config.LOG_DIR.log_scalar)
 
         ## model
@@ -39,7 +40,7 @@ class Trainer():
         #     self.model.print()
 
         ## checkpoint manager
-        self.ckpt_manager = CKPT_Manager(config.LOG_DIR.ckpt, config.mode, config.max_ckpt_num, is_descending = True)
+        self.ckpt_manager = CKPT_Manager(config.LOG_DIR.ckpt, config.mode, config.cuda, config.max_ckpt_num, is_descending = True)
 
         ## training vars
         self.states = ['train', 'valid']
@@ -47,7 +48,7 @@ class Trainer():
         self.max_epoch = int(math.ceil(config.total_itr / self.model.get_itr_per_epoch('train')))
         self.epoch_range = np.arange(1, self.max_epoch + 1)
         self.err_epoch = {'train': {}, 'valid': {}}
-        self.norm = torch.tensor(0).to(torch.device('cuda'))
+        self.norm = torch.tensor(0).to(self.device)
         self.lr = 0
 
         if self.config.resume is not None:
@@ -135,7 +136,7 @@ class Trainer():
 
 
         itr = 0
-        self.norm = torch.tensor(0).to(torch.device('cuda'))
+        self.norm = torch.tensor(0).to(self.device)
         for inputs in data_loader:
             lr = None
             itr_time = time.time()
@@ -225,6 +226,7 @@ if __name__ == '__main__':
         parser.add_argument('-b', '--batch_size', type = int, default = config.batch_size, help = 'number of batch')
         parser.add_argument('-th', '--thread_num', type = int, default = config.thread_num, help = 'number of thread')
         parser.add_argument('-dist', '--dist', action = 'store_true', default = config.dist, help = 'whether to distributed pytorch')
+        parser.add_argument('-cpu', '--cpu', action = 'store_true', default = config.dist, help = 'whether to use cpu')
         parser.add_argument('-vs', '--is_verbose', action = 'store_true', default = False, help = 'whether to delete log')
         parser.add_argument('-ss', '--save_sample', action = 'store_true', default = False, help = 'whether to save_sample')
         parser.add_argument("--local_rank", type=int)
@@ -247,6 +249,11 @@ if __name__ == '__main__':
         config.batch_size = args.batch_size
         config.thread_num = args.thread_num
         config.dist = args.dist
+        config.cuda = not args.cpu
+        if config.cuda == True:
+            config.device = 'cuda'
+        else:
+            config.device = 'cpu'
         config.is_verbose = args.is_verbose
         config.save_sample = args.save_sample
 
@@ -316,7 +323,8 @@ if __name__ == '__main__':
         parser.add_argument('-ckpt_abs_name', '--ckpt_abs_name', type=str, default = None, help='ckpt abs name')
         parser.add_argument('-ckpt_epoch', '--ckpt_epoch', type=int, default = None, help='ckpt epoch')
         parser.add_argument('-ckpt_sc', '--ckpt_score', action = 'store_true', help='ckpt name')
-        parser.add_argument('-dist', '--dist', action = 'store_true', default = False, help = 'whether to distributed pytorch')
+        parser.add_argument('-dist', '--dist', action = 'store_true', default = False, help = 'whether to use distributed pytorch')
+        parser.add_argument('-cpu', '--cpu', action = 'store_true', default = config.dist, help = 'whether to use cpu')
         parser.add_argument('-eval_mode', '--eval_mode', type=str, default = 'quan', help = 'evaluation mode. qual(qualitative)|quan(quantitative)')
         parser.add_argument('-data', '--data', type=str, default = 'DPDD', help = 'dataset to evaluate(DPDD|PixelDP|RealDOF|random)')
         args, _ = parser.parse_known_args()
@@ -328,6 +336,12 @@ if __name__ == '__main__':
         config.EVAL.load_ckpt_by_score = args.ckpt_score
 
         config.dist = args.dist
+        config.cuda = not args.cpu
+        if config.cuda == True:
+            config.device = 'cuda'
+        else:
+            config.device = 'cpu'
+
         config.EVAL.eval_mode = args.eval_mode
         config.EVAL.data = args.data
 
