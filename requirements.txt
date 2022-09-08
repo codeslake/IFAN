@@ -9,4 +9,5 @@ tensorboardX==2.1
 termcolor==1.1.0
 torch-optimizer==0.1.0
 tqdm==4.56.0
+protobuf==3.20.0
 jupyterlab

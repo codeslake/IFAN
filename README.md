@@ -25,18 +25,39 @@ This repo contains training and evaluation code for the following paper:
 ![CUDA](https://img.shields.io/badge/CUDA-10.2%20&%2011.1%20&%2011.3-green.svg?style=plastic)
 
 #### 1. Environment setup
-```bash
-$ git clone https://github.com/codeslake/IFAN.git
-$ cd IFAN
+* Option 1. install from scratch
+    ```bash
+    $ git clone https://github.com/codeslake/IFAN.git
+    $ cd IFAN
 
-$ conda create -y --name IFAN python=3.8 && conda activate IFAN
-# for CUDA10.2
-$ sh install_CUDA10.2.sh
-# for CUDA11.1
-$ sh install_CUDA11.1.sh
-# for CUDA11.3 (for amp)
-$ sh install_CUDA11.3.sh
-```
+    ## for CUDA10.2
+    $ conda create -y --name IFAN python=3.6 && conda activate IFAN
+    $ sh install_CUDA10.2.sh
+
+    ## for CUDA11.1 or CUDA11.3
+    $ conda create -y --name IFAN python=3.8 && conda activate IFAN
+    # CUDA11.1
+    $ sh install_CUDA11.1.sh
+
+    # CUDA11.3 (for amp)
+    $ sh install_CUDA11.3.sh
+    ```
+
+* Option 2. docker
+    ```bash
+    $ nvidia-docker run --privileged --gpus=all -it --name IFAN --rm codeslake/IFAN:CVPR2021 /bin/zsh
+    $ git clone https://github.com/codeslake/IFAN.git
+    $ cd IFAN
+
+    # for CUDA10.2
+    $ coda activate IFAN_CUDA10.2
+
+    # for CUDA11.1
+    $ coda activate IFAN_CUDA11.1
+
+    # for CUDA11.3 (for amp)
+    $ coda activate IFAN_CUDA11.3
+    ```
 
 
 
