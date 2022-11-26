@@ -92,7 +92,10 @@ Download and unzip pretrained weights ([Google Drive](https://drive.google.com/o
 
 ## Testing models of CVPR 2021
 
-* **Note:** There is a mistake in the [IAC layer](https://github.com/codeslake/IFAN/blob/main/models/IAC.py#L36). The current code is using isotropic kernels in which the separable kernels are exactly the same. The current IFAN still works, as defocus blur is usually in isotropic shape while the current IAC layer is dealing with them with isotropic separable kernels. If you are to train the code from scratch, please update the IAC layer to use `kernel1` and `kernel2` as commented in the code. I will update the experimental results based on the corrected IAC layer.*
+***Important Note:** There is a mistake in the [IAC layer](https://github.com/codeslake/IFAN/blob/main/models/IAC.py#L36). The current code uses isotropic kernels in which the two separable kernels are exactly the same (per iteration).
+The current IFAN still works, as defocus blur is usually in isotropic shape which the current IAC layer can handle with the isotropic kernels.*
+
+*If you are to train the code from scratch, please update the [IAC layer](https://github.com/codeslake/IFAN/blob/main/models/IAC.py#L36) to use `kernel1` and `kernel2` as commented in the code. I will update the experimental results based on the corrected IAC layer.*
 
 ```shell
 ## Table 2 in the main paper
