@@ -33,6 +33,7 @@ def SAC(feat_in, kernel1, kernel2, ksize):
     feat_in = feat_in.unfold(3, ksize, 1)
     feat_in = feat_in.permute(0, 2, 3, 1, 4).view(N, H, W, channels, -1)
     kernel2 = kernel2.permute(0, 2, 3, 1).view(N, H, W, channels, ksize)
+    # Should be kernel2 below. The current model checkpoints are trained under this code. We will update the new experiment results soon.
     feat_in = torch.sum(torch.mul(feat_in, kernel1), -1)
     feat_out = feat_in.permute(0, 3, 1, 2)
 
