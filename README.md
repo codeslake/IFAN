@@ -60,13 +60,12 @@ This repo contains training and evaluation code for the following paper:
     ```
 
 
-
 #### 2. Datasets
 Download and unzip datasets under `[DATASET_ROOT]`:
-* DPDD dataset: [Google Drive](https://drive.google.com/open?id=1Mq7WtYMo9mRsJ6I6ccXdY1JJQvwBuMuQ&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1)
-* PixelDP test set: [Google Drive](https://drive.google.com/open?id=1MuCLc1Jq7NASiVdgohHkrq5_Jtisoogj&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1)
-* CUHK test set: [Google Drive](https://drive.google.com/open?id=1Mol1GV-1NNoSX-BCRTE09Sins8LMVRyl&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1)
-* RealDOF test set: [Google Drive](https://drive.google.com/open?id=1MyizebyGPzK-VeV1pKVf7OTDl_3GmkdQ&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1)
+* DPDD dataset: [OneDrive](https://onedrive.live.com/download?resid=94530B7E5F49D254%2123628&authkey=!AJTXeSG1QzF1q5A) | [Dropbox](https://www.dropbox.com/s/w9urn5m4mzllrwu/DPDD.zip?dl=1)
+* PixelDP test set: [OneDrive](https://onedrive.live.com/download?resid=94530B7E5F49D254%21487&authkey=!AAnKOuOL7yHLM94) | [Dropbox](https://www.dropbox.com/s/pw7w2bpp7pc410n/PixelDP.zip?dl=1)
+* CUHK test set: [OneDrive](https://onedrive.live.com/download?resid=94530B7E5F49D254%21486&authkey=!ABnNaUEHo63ZPKI) | [Dropbox](https://www.dropbox.com/s/zxjhzuxsxh4v0cv/CUHK.zip?dl=1)
+* RealDOF test set: [OneDrive](https://onedrive.live.com/download?resid=94530B7E5F49D254%21511&authkey=!AJu9MY_YydEc-aU) | [Dropbox](https://www.dropbox.com/s/arox1aixvg67fw5/RealDOF.zip?dl=1)
 
 ```
 [DATASET_ROOT]
@@ -78,7 +77,7 @@ Download and unzip datasets under `[DATASET_ROOT]`:
 > `[DATASET_ROOT]` can be modified with [`config.data_offset`](https://github.com/codeslake/IFAN/blob/main/configs/config.py#L48-L49) in `./configs/config.py`.
 
 #### 3. Pre-trained models
-Download and unzip pretrained weights ([Google Drive](https://drive.google.com/open?id=1MnoyTZgHgG7vwZYuloLeQgegwa6O9A7O&authuser=codeslake%40gmail.com&usp=drive_fs) | [Dropbox](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1)) under `./ckpt/`:
+Download and unzip pretrained weights ([OneDrive](https://onedrive.live.com/download?resid=94530B7E5F49D254%21495&authkey=!AKmlSKrsKPa9cQ0) | [Dropbox](https://www.dropbox.com/s/qohhmr9p81u0syi/checkpoints.zip?dl=1)) under `./ckpt/`:
 
 ```
 .
