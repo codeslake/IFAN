@@ -53,8 +53,8 @@ def get_config(project = '', mode = '', config_ = ''):
     config.beta1 = 0.9
 
     # data dir
-    config.data_offset = '/data1/junyonglee/defocus_deblur'
-    #config.data_offset = 'datasets/defocus_deblur'
+    # config.data_offset = '/data1/junyonglee/defocus_deblur'
+    config.data_offset = 'datasets/defocus_deblur'
     config.c_path = os.path.join(config.data_offset, 'DPDD/train_c')
     config.l_path = os.path.join(config.data_offset, 'DPDD/train_l')
     config.r_path = os.path.join(config.data_offset, 'DPDD/train_r')
